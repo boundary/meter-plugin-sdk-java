@@ -1,4 +1,4 @@
-package com.boundary.plugin;
+package com.boundary.plugin.sdk;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
