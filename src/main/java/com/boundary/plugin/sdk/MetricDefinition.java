@@ -7,40 +7,42 @@ public class MetricDefinition {
      * Name of the metric, must be globally unique if creating
      */
     @JsonProperty
-    private final String name;
+    private String name;
     /**
      * Description of the metric (optional if updating)
      */
-    private final String description;
+    @JsonProperty
+    private String description;
     /**
      * Short name to use when referring to the metric (optional if updating)
      */
     @JsonProperty
-    private final String displayName;
+    private String displayName;
     /**
      * Terse short name when referring to the metric and space is limited, less than 15 characters preferred. (optional if updating)
      */
     @JsonProperty
-    private final String displayNameShort;
+    private String displayNameShort;
     /**
      * The units of measurement for the metric, can be percent, number, bytecount, or duration (optional if updating)
      */
     @JsonProperty
-    private final String unit;
+    private String unit;
     /**
      * When graphing (or grouping at the 1 second interval) the aggregate function that makes most sense for this metric.
      * Can be sum, avg, max, or min. (optional if updating)
      */
     @JsonProperty
-    private final String defaultAggregate;
+    private String defaultAggregate;
     /** 
      * Expected polling time of data in milliseconds. Used to improve rendering of graphs for non-one-second polled metrics. (optional if updating)
      */
     @JsonProperty
-    private final long defaultResolutionMS;
+    private long defaultResolutionMS;
     /**
      * Is this metric disabled (optional if updating)
      */
+    @JsonProperty
     private boolean isDisabled;
 
     public MetricDefinition() {
