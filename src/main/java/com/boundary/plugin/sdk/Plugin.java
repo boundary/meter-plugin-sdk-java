@@ -1,9 +1,9 @@
 package com.boundary.plugin.sdk;
 
 public interface Plugin {
-	public void start();
-	public void stop();
-	public void pause();
-	public void resume();
+	
+	public void setConfiguration(PluginConfiguration configuration);
+	public void setScheduler(PluginScheduler scheduler);
+
 	public void run();
 }
