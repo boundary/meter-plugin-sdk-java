@@ -5,12 +5,13 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>com.boundary.plugins</groupId>
   <artifactId>java-plugin-framework</artifactId>
-  <version>1.0.0</version>
+  <version>0.1.0</version>
   <properties>
     <vmware-version>5.5</vmware-version>
     <maven-compiler-version>3.1</maven-compiler-version>
-    <java-target-version>1.8</java-target-version>
-    <java-source-version>1.8</java-source-version>
+    <maven-javadoc-plugin-version>2.9.1</maven-javadoc-plugin-version>
+    <java-target-version>1.7</java-target-version>
+    <java-source-version>1.7</java-source-version>
   </properties>
   <dependencies>
     <dependency>
@@ -28,8 +29,39 @@
     <plugins>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-gpg-plugin</artifactId>
+<!--
+        <executions>
+          <execution>
+            <id>sign-artifacts</id>
+            <phase>verify</phase>
+            <goals>
+              <goal>sign</goal>
+            </goals>
+          </execution>
+        </executions>
+-->
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-javadoc-plugin</artifactId>
+        <version>${maven-javadoc-plugin-version}</version>
+<!--
+        <executions>
+          <execution>
+            <id>attach-javadoc</id>
+            <phase>package</phase>
+            <goals>
+              <goal>jar</goal>
+            </goals>
+          </execution>
+        </executions>
+-->
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-compiler-plugin</artifactId>
-        <version>3.1</version>
+        <version>${maven-compiler-version}</version>
         <configuration>
           <source>${java-source-version}</source>
           <target>${java-target-version}</target>
@@ -37,4 +69,21 @@
       </plugin>
     </plugins>
   </build>
+  <!-- ===================================================================== -->
+  <scm>
+    <connection>scm:git:git@github.com:boundary/boundary-plugin-framework-java.git</connection>
+    <developerConnection>scm:git:git@github.com:boundary/boundary-plugin-framework-java.git</developerConnection>
+    <url>git@github.com:boundary/boundary-plugin-framework-java.git</url>
+  </scm>
+
+  <distributionManagement>
+    <snapshotRepository>
+      <id>ossrh</id>
+      <url>https://oss.sonatype.org/content/repositories/snapshots</url>
+    </snapshotRepository>
+    <repository>
+      <id>ossrh</id>
+      <url>https://oss.sonatype.org/service/local/staging/deploy/maven2/</url>
+    </repository>
+  </distributionManagement>
 </project>
