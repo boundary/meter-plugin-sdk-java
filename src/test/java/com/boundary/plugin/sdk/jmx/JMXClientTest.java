@@ -2,6 +2,15 @@ package com.boundary.plugin.sdk.jmx;
 
 import static org.junit.Assert.*;
 
+import java.util.Set;
+
+import javax.management.MBeanAttributeInfo;
+import javax.management.MBeanInfo;
+import javax.management.MBeanServerConnection;
+import javax.management.MalformedObjectNameException;
+import javax.management.ObjectInstance;
+import javax.management.ObjectName;
+
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
@@ -10,13 +19,15 @@ import org.junit.Test;
 
 public class JMXClientTest {
 	
-	private static ExampleAgent agent;
+	private static ExecExampleAgent agent;
+	
+	private MBeanServerConnection connection;
 	
 	private final String name = "com.boundary.plugin.sdk.jmx.ExampleAgent";
 
 	@BeforeClass
 	public static void setUpBeforeClass() throws Exception {
-		agent = new ExampleAgent();
+		agent = new ExecExampleAgent();
 		agent.start();
 
 	}
@@ -28,6 +39,9 @@ public class JMXClientTest {
 
 	@Before
 	public void setUp() throws Exception {
+		JMXClient client = new JMXClient();
+		client.connect(name);
+		this.connection = client.getMBeanServerConnection();
 	}
 
 	@After
@@ -57,8 +71,35 @@ public class JMXClientTest {
 	}
 
 	@Test
-	public void testConnectStringIntStringString() {
-//		fail("Not yet implemented");
+	public void testQueryMBeans() throws Exception {
+		JMXClient client = new JMXClient();
+		client.connect(name);
+		ObjectName mbean = new ObjectName("com.boundary.plugin.jmx:type=Harmonic");
+		Set<ObjectInstance> results = client.queryMBeans(mbean);
+		assertNotNull("test for not null", results);
+		assertEquals("ensure count of 1",1,results.size());
+	}
+	
+	@Test
+	public void testGetMBeanInfo() throws Exception {
+		JMXClient client = new JMXClient();
+		client.connect(name);
+		MBeanServerConnection conn = client.getMBeanServerConnection();
+		ObjectName mbean = new ObjectName("com.boundary.plugin.jmx:type=Harmonic");
+		MBeanInfo info = conn.getMBeanInfo(mbean);
+		MBeanAttributeInfo attr[] = info.getAttributes();
+		System.out.println(info);
+		for (MBeanAttributeInfo i : attr) {
+			System.out.println(i.getName());
+		}
+//		for (ObjectInstance b : results) {
+//			conn.get
+//		}
+	}
+	
+	@Test
+	public void testGetMBeanValue() throws Exception {
+		
 	}
 
 }

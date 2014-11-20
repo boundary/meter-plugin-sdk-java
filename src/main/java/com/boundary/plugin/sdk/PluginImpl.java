@@ -37,7 +37,7 @@ public class PluginImpl implements Plugin {
 	}
 
 	@Override
-	public void setScheduler(PluginScheduler scheduler) {
+	public void setDispatcher(PluginDispatcher dispatcher) {
 		// TODO Auto-generated method stub
 		
 	}

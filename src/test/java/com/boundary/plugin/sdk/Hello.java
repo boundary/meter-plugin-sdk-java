@@ -12,18 +12,17 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package com.boundary.plugin.sdk.jmx;
+package com.boundary.plugin.sdk;
 
-public interface HarmonicMBean {
+public class Hello {
+
+	public Hello() {
+	}
 	
-	public void setAmplitude(double amplitude);
-	public double getAmplitude();
-	
-	public void setFrequency(double frequency);
-	public double getFrequency();
-	
-	public void setPhase(double phase);
-	public double getPhase();
-	
-	public double evaluate();
+	public static void main(String[] args) throws InterruptedException {
+		while(true) {
+			Thread.sleep(5000);
+		}
+	}
+
 }
