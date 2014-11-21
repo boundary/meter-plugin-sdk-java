@@ -14,16 +14,53 @@
 
 package com.boundary.plugin.sdk.jmx;
 
+/**
+ * Example MBean that generates values based on simple harmonic motion
+ * 
+ *  http:
+ */
 public interface HarmonicMBean {
 	
+	/**
+	 * Sets the amplitude of the harmonic simple harmonic motion
+	 * @param amplitude
+	 */
 	public void setAmplitude(double amplitude);
+	
+	/**
+	 * Gets the amplitude of the simple harmonic motion
+	 * @return double
+	 */
 	public double getAmplitude();
 	
+	/**
+	 * Sets the frequency of the simple harmonic motion
+	 * 
+	 * @param frequency
+	 */
 	public void setFrequency(double frequency);
+	
+	/**
+	 * Get the frequency of the simple harmonic motion
+	 * @return
+	 */
 	public double getFrequency();
 	
+	/**
+	 * Sets the phase of the simple harmonic motion
+	 * @param phase
+	 */
 	public void setPhase(double phase);
-	public double getPhase();
 	
-	public double evaluate();
+	/**
+	 * Set the phase of the simple harmonic motion
+	 * @return double
+	 */
+	public double getPhase();
+
+	/**
+	 * Get the phase of the simple harmonic motion
+	 * @return
+	 */
+	public double getValue();
 }

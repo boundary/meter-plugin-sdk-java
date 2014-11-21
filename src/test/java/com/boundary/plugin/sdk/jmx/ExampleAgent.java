@@ -47,7 +47,6 @@ public class ExampleAgent implements Runnable {
 		Thread.sleep(Long.MAX_VALUE);
 		agent.stop();
 	}
-
 	@Override
 	public void run() {
 		boolean started = false;

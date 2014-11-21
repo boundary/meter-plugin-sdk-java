@@ -24,12 +24,13 @@ public class JMXClientTest {
 	private MBeanServerConnection connection;
 	
 	private final String name = "com.boundary.plugin.sdk.jmx.ExampleAgent";
+	private ObjectName harmonicBean;
+	private String HARMONIC_BEAN_ATTR_VALUE = "Value";
 
 	@BeforeClass
 	public static void setUpBeforeClass() throws Exception {
 		agent = new ExecExampleAgent();
 		agent.start();
-
 	}
 
 	@AfterClass
@@ -42,6 +43,7 @@ public class JMXClientTest {
 		JMXClient client = new JMXClient();
 		client.connect(name);
 		this.connection = client.getMBeanServerConnection();
+		harmonicBean = new ObjectName("com.boundary.plugin.jmx:type=Harmonic");
 	}
 
 	@After
@@ -51,8 +53,17 @@ public class JMXClientTest {
 
 	@Test
 	public void testJMXClient() {
-		
 
+	}
+	
+	@Test
+	public void testConnectHostPort() throws Exception {
+		JMXClient client = new JMXClient();
+		assertTrue("Check attach connect",client.connect("localhost",7199));
+		MBeanServerConnection connection = client.getMBeanServerConnection();
+		
+		System.out.println(connection.getMBeanCount());
+		
 	}
 
 	@Test
@@ -66,7 +77,6 @@ public class JMXClientTest {
 	@Test
 	public void testConnectStringInt() throws Exception {
 		JMXClient client = new JMXClient();
-		
 		assertTrue("Check attach connect",client.connect(name));
 	}
 
@@ -82,15 +92,13 @@ public class JMXClientTest {
 	
 	@Test
 	public void testGetMBeanInfo() throws Exception {
-		JMXClient client = new JMXClient();
-		client.connect(name);
-		MBeanServerConnection conn = client.getMBeanServerConnection();
+
 		ObjectName mbean = new ObjectName("com.boundary.plugin.jmx:type=Harmonic");
-		MBeanInfo info = conn.getMBeanInfo(mbean);
+		MBeanInfo info = connection.getMBeanInfo(mbean);
 		MBeanAttributeInfo attr[] = info.getAttributes();
 		System.out.println(info);
 		for (MBeanAttributeInfo i : attr) {
-			System.out.println(i.getName());
+			System.out.println(i);
 		}
 //		for (ObjectInstance b : results) {
 //			conn.get
@@ -99,7 +107,8 @@ public class JMXClientTest {
 	
 	@Test
 	public void testGetMBeanValue() throws Exception {
-		
+		double currentValue = (double) this.connection.getAttribute(harmonicBean,HARMONIC_BEAN_ATTR_VALUE);
+		System.out.println(currentValue);
 	}
 
 }

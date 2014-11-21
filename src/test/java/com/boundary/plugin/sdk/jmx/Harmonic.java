@@ -74,7 +74,7 @@ public class Harmonic implements HarmonicMBean {
 	public void setPhase(double phase) {
 		this.phase = phase;
 	}
-
+	
 	/* (non-Javadoc)
 	 * @see com.boundary.plugin.sdk.jmx.HarmonicMBean#getPhase()
 	 */
@@ -87,9 +87,8 @@ public class Harmonic implements HarmonicMBean {
 	 * @see com.boundary.plugin.sdk.jmx.HarmonicMBean#evaluate()
 	 */
 	@Override
-	public double evaluate() {
+	public double getValue() {
 		double t = new Date().getTime();
 		return this.amplitude * Math.cos((this.frequency * t) + phase);
 	}
-
 }
