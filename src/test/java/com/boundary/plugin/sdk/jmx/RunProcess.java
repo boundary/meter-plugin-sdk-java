@@ -20,35 +20,48 @@ import java.util.concurrent.TimeUnit;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class ExecExampleAgent implements Runnable {
+/**
+ * Helper class that is able to start and stop an arbitrary process.
+ *
+ */
+public class RunProcess implements Runnable {
 	
-    private static Logger LOG = LoggerFactory.getLogger(ExecExampleAgent.class);
+    private static Logger LOG = LoggerFactory.getLogger(RunProcess.class);
     
-    private final String EXEC="java -cp target/test-classes com.boundary.plugin.sdk.jmx.ExampleAgent";
+    private final static String EXEC="java -cp target/test-classes com.boundary.plugin.sdk.jmx.ExampleAgent";
 
+    private String command;
 	private Process process;
 	BufferedReader standardInput;
 	BufferedReader standardError;
 	Thread thread;
 	
-	public ExecExampleAgent() {
-		
+	/**
+	 * Constructs an instance to managed an executeable
+	 * 
+	 * @param command Executable and options to run
+	 */
+	public RunProcess(String command) {
+		this.command = command;
 	}
 	
 	/**
-	 * Starts a thread to run the MBean server
+	 * Starts a thread to run the process
 	 */
 	public void start() {
-		this.thread = new Thread(this,"ExecExampleAgent");
+		this.thread = new Thread(this,this.command);
 		this.thread.setDaemon(false);
 		this.thread.start();
 	}
 
 
+	/**
+	 * Handle the running of the command
+	 */
 	public void run() {
 		String s = null;
 		try {
-			process = Runtime.getRuntime().exec(this.EXEC);
+			process = Runtime.getRuntime().exec(this.command);
 			standardInput = new BufferedReader(new InputStreamReader(process.getInputStream()));
 			standardError = new BufferedReader(new InputStreamReader(process.getErrorStream()));
 
@@ -63,19 +76,21 @@ public class ExecExampleAgent implements Runnable {
 		}
 	}
 	
+	/**
+	 * Terminates the running command
+	 */
 	public void stop() {
 		while(process.isAlive()) {
 			process.destroy();
 			try {
 				process.waitFor(1000,TimeUnit.MILLISECONDS);
 			} catch (InterruptedException e) {
-				e.printStackTrace();
 			}
 		}
 	}
 	
 	public static void main(String []args) throws InterruptedException {
-		ExecExampleAgent agentExec = new ExecExampleAgent();
+		RunProcess agentExec = new RunProcess(RunProcess.EXEC);
 		agentExec.start();
 		Thread.sleep(5000);
 		agentExec.stop();

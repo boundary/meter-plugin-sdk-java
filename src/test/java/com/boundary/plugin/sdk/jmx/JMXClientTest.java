@@ -7,7 +7,6 @@ import java.util.Set;
 import javax.management.MBeanAttributeInfo;
 import javax.management.MBeanInfo;
 import javax.management.MBeanServerConnection;
-import javax.management.MalformedObjectNameException;
 import javax.management.ObjectInstance;
 import javax.management.ObjectName;
 
@@ -19,23 +18,32 @@ import org.junit.Test;
 
 public class JMXClientTest {
 	
-	private static ExecExampleAgent agent;
+	private static RunProcess attachAgent;
+	private static RunProcess rmiAgent;
 	
 	private MBeanServerConnection connection;
 	
 	private final String name = "com.boundary.plugin.sdk.jmx.ExampleAgent";
+    private final static String ATTACH_EXEC = "java -cp target/test-classes com.boundary.plugin.sdk.jmx.ExampleAgent";
+    private final static int RMI_PORT = 12345;
+    private final static String RMI_EXEC = "java -cp target/test-classes com.boundary.plugin.sdk.jmx.ExampleAgent -Dcom.sun.management.jmxremote.port=" 
+    		+ RMI_PORT;
 	private ObjectName harmonicBean;
 	private String HARMONIC_BEAN_ATTR_VALUE = "Value";
 
 	@BeforeClass
 	public static void setUpBeforeClass() throws Exception {
-		agent = new ExecExampleAgent();
-		agent.start();
+		attachAgent = new RunProcess(JMXClientTest.ATTACH_EXEC);
+		attachAgent.start();
+		
+		rmiAgent = new RunProcess(JMXClientTest.RMI_EXEC);
+		rmiAgent.start();
 	}
 
 	@AfterClass
 	public static void tearDownAfterClass() throws Exception {
-		agent.stop();
+		attachAgent.stop();
+		rmiAgent.stop();
 	}
 
 	@Before
@@ -59,11 +67,10 @@ public class JMXClientTest {
 	@Test
 	public void testConnectHostPort() throws Exception {
 		JMXClient client = new JMXClient();
-		assertTrue("Check attach connect",client.connect("localhost",7199));
+		assertTrue("Check attach connect",client.connect("localhost",RMI_PORT));
 		MBeanServerConnection connection = client.getMBeanServerConnection();
 		
 		System.out.println(connection.getMBeanCount());
-		
 	}
 
 	@Test
