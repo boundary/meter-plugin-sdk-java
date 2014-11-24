@@ -17,6 +17,7 @@ package com.boundary.plugin.sdk;
 public class PluginRunner {
 	
 	private String className;
+	private PluginDispatcher dispatcher;
 	
 	/**
 	 * Default constructor
@@ -24,15 +25,17 @@ public class PluginRunner {
 	 */
 	public PluginRunner(String className) {
 		this.className = className;
+		this.dispatcher = new PluginDispatcher();
 	}
 	
 	/**
 	 * Loads the plugin class and calls its run() method.
 	 */
-	void run() {
+	public void run() {
 		Plugin plugin = null;
 		try {
 			plugin = (Plugin) Class.forName(this.className).newInstance();
+			plugin.setDispatcher(dispatcher);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

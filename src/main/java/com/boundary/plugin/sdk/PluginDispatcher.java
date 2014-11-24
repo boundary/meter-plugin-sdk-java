@@ -14,13 +14,43 @@
 
 package com.boundary.plugin.sdk;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.concurrent.Executor;
+import java.util.concurrent.Executors;
+
+/**
+ * Handles the running of collectors.
+ *
+ */
 public class PluginDispatcher {
 	
+	Executor executor;
+	List<Collector> collectorList;
+	
+	/**
+	 * Default constructor
+	 */
 	public PluginDispatcher() {
-		
+		collectorList = new ArrayList<Collector>();
 	}
 	
+	/**
+	 * Adds a collector so that it can be dispatched.
+	 * 
+	 * @param collector {@link Collector}
+	 */
 	public void addCollector(Collector collector) {
-		
+		collectorList.add(collector);
+	}
+	
+	/**
+	 * Runs the collectors in separate threads
+	 */
+	public void run() {
+		Executor executor = Executors.newFixedThreadPool(collectorList.size()) ; 
+		for (Collector collector : collectorList ) {
+			executor.execute(collector);
+		}
 	}
 }

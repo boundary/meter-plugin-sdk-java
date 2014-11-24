@@ -18,13 +18,13 @@ package com.boundary.plugin.sdk;
  * Interface for java metric plugins.
  *
  */
-public interface Plugin {
+public interface Plugin <C> {
 	
 	/**
 	 * Provides a configuration instance for the plugin
 	 * @param configuration Plugin specific configuration
 	 */
-	public void setConfiguration(PluginConfiguration<?> configuration);
+	public void setConfiguration(PluginConfiguration<C> configuration);
 	
 	/**
 	 * Sets the dispatcher associated with the plugin

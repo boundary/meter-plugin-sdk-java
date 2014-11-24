@@ -14,24 +14,19 @@
 
 package com.boundary.plugin.sdk.examples;
 
-import java.util.Random;
-
-import com.boundary.plugin.sdk.Measure;
-import com.boundary.plugin.sdk.MeasureOutputSupport;
-import com.boundary.plugin.sdk.MeasureOutputSupport.Type;
 import com.boundary.plugin.sdk.Plugin;
 import com.boundary.plugin.sdk.PluginConfiguration;
 import com.boundary.plugin.sdk.PluginDispatcher;
-import com.boundary.plugin.sdk.MeasureOutput;
 import com.boundary.plugin.sdk.PluginRunner;
 
 public class SimplePlugin implements Plugin<SimpleConfiguration> {
-	
+
 	PluginConfiguration<SimpleConfiguration> configuration;
 	PluginDispatcher dispatcher;
 
 	@Override
-	public void setConfiguration(PluginConfiguration<SimpleConfiguration> configuration) {
+	public void setConfiguration(
+			PluginConfiguration<SimpleConfiguration> configuration) {
 		this.configuration = configuration;
 	}
 
@@ -43,14 +38,16 @@ public class SimplePlugin implements Plugin<SimpleConfiguration> {
 	@Override
 	public void run() {
 		SimpleCollector one = new SimpleCollector("COLLECTOR_ONE");
-		SimpleCollector two = new SimpleCollector("COLLECTOR_ONE");
-		
+		SimpleCollector two = new SimpleCollector("COLLECTOR_TWO");
+
 		dispatcher.addCollector(one);
 		dispatcher.addCollector(two);
+		dispatcher.run();
 	}
-	
-	public static void main(String [] args) {
-		PluginRunner plugin = new PluginRunner(SimplePlugin.class.toString());
+
+	public static void main(String[] args) {
+		PluginRunner plugin = new PluginRunner(
+				"com.boundary.plugin.sdk.examples.SimplePlugin");
 		plugin.run();
 	}
 }
