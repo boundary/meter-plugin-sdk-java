@@ -1,0 +1,10 @@
+{
+  "mbean-map": [
+    {
+      "mbean":"java.lang:type=Runtime",
+      "attribute":"Uptime",
+      "metric-name":"JVM.JAVA.LANG.RUNTIME.UPTIME",
+      "metric-type":"standard"
+    }
+  ]
+}
