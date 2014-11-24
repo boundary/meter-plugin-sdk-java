@@ -1,0 +1,20 @@
+{
+   "items": [
+      {
+            "name": "Simple #1",
+            "source": "Simple One"
+      },
+      {
+            "name": "Simple #2",
+            "source": "Simple Two"
+      },
+      {
+            "name": "Simple #3",
+            "source": "Simple Three"
+      }
+   ],
+   "pollInterval": 1000
+}
+
+
+
