@@ -17,10 +17,12 @@ package com.boundary.plugin.sdk.examples;
 import java.util.Random;
 
 import com.boundary.plugin.sdk.Measure;
+import com.boundary.plugin.sdk.MeasureOutputSupport;
+import com.boundary.plugin.sdk.MeasureOutputSupport.Type;
 import com.boundary.plugin.sdk.Plugin;
 import com.boundary.plugin.sdk.PluginConfiguration;
 import com.boundary.plugin.sdk.PluginDispatcher;
-import com.boundary.plugin.sdk.MeasureWriter;
+
 import com.boundary.plugin.sdk.MeasureOutput;
 
 public class SimplePlugin implements Plugin {
@@ -40,7 +42,7 @@ public class SimplePlugin implements Plugin {
 
 	@Override
 	public void run() {
-		MeasureOutput output = new MeasureWriter().getInstance();
+		MeasureOutput output = MeasureOutputSupport.getInstance(Type.STDOUT);
 		Random rand = new Random();
 		
 		while(true) {
@@ -51,6 +53,8 @@ public class SimplePlugin implements Plugin {
 
 				int  n = rand.nextInt(50) + 1;
 				m.setValue(Integer.toString(n));
+				
+				output.send(m);
 				
 				Thread.sleep(5000);
 			} catch (InterruptedException e) {

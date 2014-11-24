@@ -40,7 +40,7 @@ public class MeasureWriterTest {
 
 	@Test
 	public void testWriter() {
-		MeasureWriter writer = new MeasureWriter();
+		MeasureOutputStandardOut writer = new MeasureOutputStandardOut();
 		Measure m = new Measure();
 		Date d = new Date();
 		
