@@ -22,17 +22,17 @@ import com.boundary.plugin.sdk.MeasureOutputSupport.Type;
 import com.boundary.plugin.sdk.Plugin;
 import com.boundary.plugin.sdk.PluginConfiguration;
 import com.boundary.plugin.sdk.PluginDispatcher;
-
 import com.boundary.plugin.sdk.MeasureOutput;
+import com.boundary.plugin.sdk.PluginRunner;
 
-public class SimplePlugin implements Plugin {
+public class SimplePlugin implements Plugin<SimpleConfiguration> {
 	
 	PluginConfiguration<SimpleConfiguration> configuration;
 	PluginDispatcher dispatcher;
 
 	@Override
-	public void setConfiguration(PluginConfiguration<?> configuration) {
-		this.configuration = (PluginConfiguration<SimpleConfiguration>)configuration;
+	public void setConfiguration(PluginConfiguration<SimpleConfiguration> configuration) {
+		this.configuration = configuration;
 	}
 
 	@Override
@@ -42,28 +42,15 @@ public class SimplePlugin implements Plugin {
 
 	@Override
 	public void run() {
-		MeasureOutput output = MeasureOutputSupport.getInstance(Type.STDOUT);
-		Random rand = new Random();
+		SimpleCollector one = new SimpleCollector("COLLECTOR_ONE");
+		SimpleCollector two = new SimpleCollector("COLLECTOR_ONE");
 		
-		while(true) {
-			try {
-				Measure m = new Measure();
-				m.setName("SIMPLE_METRIC");
-				m.setSource("simple");
-
-				int  n = rand.nextInt(50) + 1;
-				m.setValue(Integer.toString(n));
-				
-				output.send(m);
-				
-				Thread.sleep(5000);
-			} catch (InterruptedException e) {
-				e.printStackTrace();
-			}
-		}
+		dispatcher.addCollector(one);
+		dispatcher.addCollector(two);
 	}
 	
-	public void main(String[] args) {
-		
+	public static void main(String [] args) {
+		PluginRunner plugin = new PluginRunner(SimplePlugin.class.toString());
+		plugin.run();
 	}
 }
