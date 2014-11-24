@@ -14,25 +14,32 @@
 
 package com.boundary.plugin.sdk.examples;
 
-public class SimpleConfiguration {
-	
-	private int delay;
-	private String name;
-	
-	SimpleConfiguration() {
-		
+import com.boundary.plugin.sdk.PluginConfiguration;
+import java.util.ArrayList;
+
+public class SimplePluginConfiguration implements PluginConfiguration {
+
+	private ArrayList<SimplePluginConfigurationItem> items;
+	private int pollInterval;
+
+	public SimplePluginConfiguration() {
+
 	}
-	
-	public int getDelay() {
-		return delay;
+
+	public ArrayList<SimplePluginConfigurationItem> getItems() {
+		return items;
 	}
-	public void setDelay(int delay) {
-		this.delay = delay;
+
+	public void setItems(ArrayList<SimplePluginConfigurationItem> items) {
+		this.items = items;
 	}
-	public String getName() {
-		return name;
+
+	public int getPollInterval() {
+		return pollInterval;
 	}
-	public void setName(String name) {
-		this.name = name;
+
+	public void setPollInterval(int pollInterval) {
+		this.pollInterval = pollInterval;
 	}
+
 }

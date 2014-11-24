@@ -14,20 +14,44 @@
 
 package com.boundary.plugin.sdk.examples;
 
+import java.io.File;
+import java.io.IOException;
+import java.util.ArrayList;
+
 import com.boundary.plugin.sdk.Plugin;
 import com.boundary.plugin.sdk.PluginConfiguration;
 import com.boundary.plugin.sdk.PluginDispatcher;
 import com.boundary.plugin.sdk.PluginRunner;
+import com.fasterxml.jackson.core.JsonParseException;
+import com.fasterxml.jackson.databind.JsonMappingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
-public class SimplePlugin implements Plugin<SimpleConfiguration> {
+public class SimplePlugin implements Plugin<SimplePluginConfiguration> {
 
-	PluginConfiguration<SimpleConfiguration> configuration;
+	SimplePluginConfiguration configuration;
 	PluginDispatcher dispatcher;
 
 	@Override
-	public void setConfiguration(
-			PluginConfiguration<SimpleConfiguration> configuration) {
+	public void setConfiguration(SimplePluginConfiguration configuration) {
 		this.configuration = configuration;
+	}
+	
+	@Override
+	public void loadConfiguration() {
+		ObjectMapper mapper = new ObjectMapper();
+		try {
+			SimplePluginConfiguration configuration = mapper.readValue(new File("param.json"), SimplePluginConfiguration.class);
+			setConfiguration(configuration);
+		} catch (JsonParseException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (JsonMappingException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 
 	@Override
@@ -37,11 +61,12 @@ public class SimplePlugin implements Plugin<SimpleConfiguration> {
 
 	@Override
 	public void run() {
-		SimpleCollector one = new SimpleCollector("COLLECTOR_ONE");
-		SimpleCollector two = new SimpleCollector("COLLECTOR_TWO");
+		
+		ArrayList<SimplePluginConfigurationItem> items = configuration.getItems();
+		for(SimplePluginConfigurationItem i : items) {
+			dispatcher.addCollector(new SimpleCollector(i.getName()));
+		}
 
-		dispatcher.addCollector(one);
-		dispatcher.addCollector(two);
 		dispatcher.run();
 	}
 
@@ -50,4 +75,6 @@ public class SimplePlugin implements Plugin<SimpleConfiguration> {
 				"com.boundary.plugin.sdk.examples.SimplePlugin");
 		plugin.run();
 	}
+
+
 }

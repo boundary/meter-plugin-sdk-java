@@ -14,15 +14,7 @@
 
 package com.boundary.plugin.sdk;
 
-import java.util.ArrayList;
+public interface PluginConfiguration {
 
-
-public class PluginConfiguration<T> {
-	
-	private String description;
-	private String icon;
-	private String command;
-	private ArrayList<String> metrics;
-	
 }
 

@@ -36,6 +36,7 @@ public class PluginRunner {
 		try {
 			plugin = (Plugin) Class.forName(this.className).newInstance();
 			plugin.setDispatcher(dispatcher);
+			plugin.loadConfiguration();
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
