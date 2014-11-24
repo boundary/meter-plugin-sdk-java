@@ -73,7 +73,7 @@ public class SimplePlugin implements Plugin<SimplePluginConfiguration> {
 	}
 
 	public static void main(String[] args) {
-		PluginRunner plugin = new PluginRunner(SimplePlugin.class.getTypeName());
+		PluginRunner plugin = new PluginRunner("com.boundary.plugin.sdk.examples.SimplePlugin");
 		plugin.run();
 	}
 
