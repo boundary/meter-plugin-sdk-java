@@ -18,6 +18,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 
+import com.boundary.plugin.sdk.MeasureOutput;
 import com.boundary.plugin.sdk.Plugin;
 import com.boundary.plugin.sdk.PluginConfiguration;
 import com.boundary.plugin.sdk.PluginDispatcher;
@@ -30,6 +31,7 @@ public class SimplePlugin implements Plugin<SimplePluginConfiguration> {
 
 	SimplePluginConfiguration configuration;
 	PluginDispatcher dispatcher;
+	MeasureOutput output;
 
 	@Override
 	public void setConfiguration(SimplePluginConfiguration configuration) {
@@ -71,10 +73,12 @@ public class SimplePlugin implements Plugin<SimplePluginConfiguration> {
 	}
 
 	public static void main(String[] args) {
-		PluginRunner plugin = new PluginRunner(
-				"com.boundary.plugin.sdk.examples.SimplePlugin");
+		PluginRunner plugin = new PluginRunner(SimplePlugin.class.getTypeName());
 		plugin.run();
 	}
 
-
+	@Override
+	public void setMeasureOutput(MeasureOutput output) {
+		this.output = output;
+	}
 }
