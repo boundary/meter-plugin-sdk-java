@@ -14,6 +14,8 @@
 
 package com.boundary.plugin.sdk;
 
+import com.boundary.plugin.sdk.MeasureOutputSupport.Type;
+
 public class PluginRunner {
 	
 	private String className;
@@ -37,6 +39,7 @@ public class PluginRunner {
 			plugin = (Plugin) Class.forName(this.className).newInstance();
 			plugin.setDispatcher(dispatcher);
 			plugin.loadConfiguration();
+			plugin.setMeasureOutput(MeasureOutputSupport.getInstance(Type.STDOUT));
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
