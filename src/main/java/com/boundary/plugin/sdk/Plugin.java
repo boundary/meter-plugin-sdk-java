@@ -20,12 +20,17 @@ package com.boundary.plugin.sdk;
  */
 public interface Plugin <T> {
 	
+	public void setMeasureOutput(MeasureOutput output);
+	
 	/**
 	 * Provides a configuration instance for the plugin
 	 * @param configuration Plugin specific configuration
 	 */
 	public void setConfiguration(T configuration);
 	
+	/**
+	 * Loads the required configuration for plugin
+	 */
 	public void loadConfiguration();
 	
 	/**
