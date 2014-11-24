@@ -2,15 +2,15 @@
    "items": [
       {
             "name": "Simple #1",
-            "source": "Simple One"
+            "source": "SimpleOne"
       },
       {
             "name": "Simple #2",
-            "source": "Simple Two"
+            "source": "SimpleTwo"
       },
       {
             "name": "Simple #3",
-            "source": "Simple Three"
+            "source": "SimpleThree"
       }
    ],
    "pollInterval": 1000
