@@ -20,7 +20,7 @@ package com.boundary.plugin.sdk;
  */
 public interface Plugin <T> {
 	
-	public void setMeasureOutput(MeasureOutput output);
+	public void setMeasureOutput(MeasurementSink output);
 	
 	/**
 	 * Provides a configuration instance for the plugin

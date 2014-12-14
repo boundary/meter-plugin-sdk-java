@@ -16,13 +16,12 @@ package com.boundary.plugin.sdk;
 
 /**
  * Interface for handling the output of {@link Measure}
- *
  */
-public interface MeasureOutput {
+public interface MeasurementSink {
 	
 	/**
 	 * Sends the measure to its destination
-	 * @param m
+	 * @param measurement {@link Measure}
 	 */
-	public void send(Measure m);
+	public void send(Measure measurement);
 }

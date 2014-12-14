@@ -21,7 +21,7 @@ package com.boundary.plugin.sdk;
  * @author davidg
  *
  */
-public class MeasureOutputStandardOut implements MeasureOutput, Runnable {
+public class MeasureOutputStandardOut implements MeasurementSink, Runnable {
 	
 	public MeasureOutputStandardOut() {
 		

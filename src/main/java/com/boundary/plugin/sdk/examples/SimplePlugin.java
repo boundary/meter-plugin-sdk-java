@@ -18,7 +18,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 
-import com.boundary.plugin.sdk.MeasureOutput;
+import com.boundary.plugin.sdk.MeasurementSink;
 import com.boundary.plugin.sdk.Plugin;
 import com.boundary.plugin.sdk.PluginConfiguration;
 import com.boundary.plugin.sdk.PluginDispatcher;
@@ -31,7 +31,7 @@ public class SimplePlugin implements Plugin<SimplePluginConfiguration> {
 
 	SimplePluginConfiguration configuration;
 	PluginDispatcher dispatcher;
-	MeasureOutput output;
+	MeasurementSink output;
 
 	@Override
 	public void setConfiguration(SimplePluginConfiguration configuration) {
@@ -78,7 +78,7 @@ public class SimplePlugin implements Plugin<SimplePluginConfiguration> {
 	}
 
 	@Override
-	public void setMeasureOutput(MeasureOutput output) {
+	public void setMeasureOutput(MeasurementSink output) {
 		this.output = output;
 	}
 }

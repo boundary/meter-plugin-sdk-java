@@ -38,7 +38,7 @@ import org.slf4j.LoggerFactory;
 
 import com.boundary.plugin.sdk.Collector;
 import com.boundary.plugin.sdk.Measure;
-import com.boundary.plugin.sdk.MeasureOutput;
+import com.boundary.plugin.sdk.MeasurementSink;
 import com.boundary.plugin.sdk.PluginUtil;
 
 /**
@@ -64,13 +64,13 @@ public class JMXCollector implements Collector {
 	private JMXClient client;
 	private JMXPluginConfigurationItem item;
 	private MBeanMap mbeanMap;
-	private MeasureOutput output;
+	private MeasurementSink output;
 	private String name;
 
 	public JMXCollector(String name,
 			JMXPluginConfigurationItem item,
 			MBeanMap mbeanMap,
-			MeasureOutput output) {
+			MeasurementSink output) {
 		this.name = name;
 		this.client = new JMXClient();
 		this.item = item;

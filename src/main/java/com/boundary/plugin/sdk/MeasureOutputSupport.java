@@ -15,8 +15,7 @@
 package com.boundary.plugin.sdk;
 
 /**
- * Factory for {@link MeasureOutput} types.
- *
+ * Factory for {@link MeasurementSink} types.
  */
 public class MeasureOutputSupport {
 	
@@ -29,12 +28,12 @@ public class MeasureOutputSupport {
 	};
 	
 	/**
-	 * Factory method to get a {@link MeasureOutput}
+	 * Factory method to get a {@link MeasurementSink}
 	 * @param type {@link enum Output}
-	 * @return {@link MeasureOutput}
+	 * @return {@link MeasurementSink}
 	 */
-	public static MeasureOutput getInstance(Type type) {
-		MeasureOutput instance = null;
+	public static MeasurementSink getInstance(Type type) {
+		MeasurementSink instance = null;
 		switch(type) {
 			case STDOUT:
 			case API:

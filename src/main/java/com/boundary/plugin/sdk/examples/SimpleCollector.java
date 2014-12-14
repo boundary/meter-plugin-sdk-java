@@ -4,7 +4,7 @@ import java.util.Random;
 
 import com.boundary.plugin.sdk.Collector;
 import com.boundary.plugin.sdk.Measure;
-import com.boundary.plugin.sdk.MeasureOutput;
+import com.boundary.plugin.sdk.MeasurementSink;
 import com.boundary.plugin.sdk.MeasureOutputSupport;
 import com.boundary.plugin.sdk.MeasureOutputSupport.Type;
 
@@ -24,7 +24,7 @@ public class SimpleCollector implements Collector {
 
 	@Override
 	public void run() {
-		MeasureOutput output = MeasureOutputSupport.getInstance(Type.STDOUT);
+		MeasurementSink output = MeasureOutputSupport.getInstance(Type.STDOUT);
 		Random rand = new Random();
 		
 		while(true) {
