@@ -53,12 +53,29 @@ public class MeasureTest {
 	}
 	
 	@Test
+	public void testSourceMutablity() {
+		String expectedSource = "some-machine.somewhere.com";
+		m.setSource(expectedSource);
+		String s = m.getSource();
+		s = "foobar";
+		assertEquals("Check source mutability",expectedSource,m.getSource());
+	}
+	
+	@Test
 	public void testTimestamp() {
 		Date expectedDate = new Date();
 		m.setTimestamp(expectedDate);
 		assertEquals("Check timestamp",expectedDate,m.getTimestamp());
 	}
 	
-	
-
+	@Test
+	public void testTimestampMutablity() throws InterruptedException {
+		Date expectedDate = new Date();
+		m.setTimestamp(expectedDate);
+		Date d = m.getTimestamp();
+		Thread.sleep(1000);
+		expectedDate = (Date)expectedDate.clone();
+		d.setTime(new Date().getTime());
+		assertEquals("Check timestamp Mutability",expectedDate,m.getTimestamp());
+	}
 }

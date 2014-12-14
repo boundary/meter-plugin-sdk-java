@@ -108,11 +108,12 @@ public class Measure {
 	}
 
 	public Date getTimestamp() {
-		return timestamp;
+		//return new Date(timestamp.getTime());
+		return (Date)timestamp.clone();
 	}
 
 	public void setTimestamp(Date timestamp) {
-		this.timestamp = timestamp;
+		this.timestamp = (Date)timestamp.clone();
 	}
 }
 
