@@ -29,12 +29,8 @@ public class SimpleCollector implements Collector {
 		
 		while(true) {
 			try {
-				Measure m = new Measure();
-				m.setName("SIMPLE_METRIC");
-				m.setSource(name);
-
-				int  n = rand.nextInt(50) + 1;
-				m.setValue(Integer.toString(n));
+				Number  n = rand.nextInt(50) + 1;
+				Measure m = new Measure("SIMPLE_METRIC",n);
 				
 				output.send(m);
 				

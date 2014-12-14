@@ -1,3 +1,17 @@
+// Copyright 2014 Boundary, Inc.
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//     http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+
 package com.boundary.plugin.sdk;
 
 import static org.junit.Assert.*;
@@ -10,9 +24,16 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
+/**
+ * Unit tests for {@link Measure}
+ */
 public class MeasureTest {
 	
-	Measure m;
+	private final static String NAME = "foobar";
+	private final static Number VALUE = 365;
+	private final static String SOURCE = "some-machine.somewhere.com";
+	private final static Date TIMESTAMP = new Date();
+
 
 	@BeforeClass
 	public static void setUpBeforeClass() throws Exception {
@@ -24,58 +45,58 @@ public class MeasureTest {
 
 	@Before
 	public void setUp() throws Exception {
-		m = new Measure();
 	}
 
 	@After
 	public void tearDown() throws Exception {
 	}
+	
+	private static void assertFields(String name,Number value,String source,Date timestamp,Measure m) {
+		if (name != null) {
+			assertEquals("check getName()",name,m.getName());
+		}
+		if (value != null) {
+			assertEquals("check getValue",value,m.getValue());
+		}
+		if (source != null) {
+			assertEquals("check getSource",source,m.getSource());
+		}
+		if (timestamp != null) {
+			assertEquals("check getTimestamp()",timestamp,m.getTimestamp());
+		}
+	}
+	
+	@Test
+	public void testDefaultConstructor() {
+		Measure m = new Measure();
+		assertFields("",0,"",null,m);
+	}
+	
+	@Test
+	public void test2ArgumentConstructor() {
+		Measure m = new Measure(NAME,VALUE);
+		assertFields(NAME,VALUE,null,null,m);
+	}
 
 	@Test
-	public void testName() {
-		String expectedName = "foobar";
-		m.setName(expectedName);
-		assertEquals("Check name",expectedName,m.getName());
+	public void test3ArgumentConstructor() {
+		Measure m = new Measure(NAME,VALUE,SOURCE);
+		assertFields(NAME,VALUE,SOURCE,null,m);
 	}
 	
 	@Test
-	public void testValue() {
-		String expectedValue = "365";
-		m.setValue(expectedValue);
-		assertEquals("Check value",expectedValue,m.getValue());
+	public void test4ArgumentConstructor() {
+		Measure m = new Measure(NAME,VALUE,SOURCE,TIMESTAMP);
+		assertFields(NAME,VALUE,SOURCE,TIMESTAMP,m);
 	}
 	
 	@Test
-	public void testSource() {
-		String expectedSource = "some-machine.somewhere.com";
-		m.setSource(expectedSource);
-		assertEquals("Check source",expectedSource,m.getSource());
-	}
-	
-	@Test
-	public void testSourceMutablity() {
-		String expectedSource = "some-machine.somewhere.com";
-		m.setSource(expectedSource);
-		String s = m.getSource();
-		s = "foobar";
-		assertEquals("Check source mutability",expectedSource,m.getSource());
-	}
-	
-	@Test
-	public void testTimestamp() {
-		Date expectedDate = new Date();
-		m.setTimestamp(expectedDate);
-		assertEquals("Check timestamp",expectedDate,m.getTimestamp());
-	}
-	
-	@Test
-	public void testTimestampMutablity() throws InterruptedException {
-		Date expectedDate = new Date();
-		m.setTimestamp(expectedDate);
+	public void testSourceMutablity() throws InterruptedException {
+		Measure m = new Measure(NAME,VALUE,SOURCE,TIMESTAMP);
 		Date d = m.getTimestamp();
 		Thread.sleep(1000);
-		expectedDate = (Date)expectedDate.clone();
-		d.setTime(new Date().getTime());
-		assertEquals("Check timestamp Mutability",expectedDate,m.getTimestamp());
+		d = new Date();
+		assertFields(NAME,VALUE,SOURCE,TIMESTAMP,m);
 	}
+
 }

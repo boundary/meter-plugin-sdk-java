@@ -41,13 +41,9 @@ public class MeasureWriterTest {
 	@Test
 	public void testWriter() {
 		MeasureOutputStandardOut writer = new MeasureOutputStandardOut();
-		Measure m = new Measure();
 		Date d = new Date();
-		
-		m.setName("BOUNDARY_CPU");
-		m.setValue("3.1459");
-		m.setSource("great-white-north");
-		m.setTimestamp(d);
+		Measure m = new Measure("BOUNDARY_CPU",3.1459,"great-white-north",d);
+
 		String expectedOutput = "BOUNDARY_CPU 3.1459 great-white-north " + Long.toString(d.getTime()) + "\n";
 		
 		writer.send(m);

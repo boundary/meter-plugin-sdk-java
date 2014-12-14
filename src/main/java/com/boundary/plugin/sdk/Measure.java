@@ -15,18 +15,17 @@
 package com.boundary.plugin.sdk;
 
 import java.util.Date;
+import static com.google.common.base.Preconditions.*;
 
 /**
  * Encapsulates the data required for a single piece of time series data to be communicated to the Plugin manager
  * by a plugin.
- * 
- * @author davidg
  *
  */
 public class Measure {
 	
     private String name;
-    private String value;
+    private Number value;
     private String source;
     private Date timestamp;
     
@@ -35,10 +34,49 @@ public class Measure {
      */
 	public Measure() {
     	name = "";
-    	value = "";
-    	source = null;
-    	timestamp = null;
+    	value = 0;
+    	source = "";
+    	setTimestamp(new Date());
     }
+	
+	/**
+	 * Constructs and instance from specified fields
+	 * 
+	 * @param name metric identifier
+	 * @param value metric value
+	 */
+	public Measure(String name,Number value) {
+		this(name,value,"",new Date());
+	}
+	
+	/**
+	 * Constructs an instance from specified fields
+	 * @param name metric identifier
+	 * @param value metric value
+	 * @param source metric source
+	 */
+	public Measure(String name,Number value,String source) {
+		this(name,value,source,new Date());
+	}
+	
+	/**
+	 * Constructs an instance from specified fields
+	 * 
+	 * @param name metric identifier
+	 * @param value metric value
+	 * @param source metric source
+	 * @param timestamp metric timestamp
+	 */
+	public Measure(String name,Number value,String source,Date timestamp) {
+		checkNotNull(name);
+		checkNotNull(value);
+		checkNotNull(source);
+		checkNotNull(timestamp);
+		this.name = name;
+		this.value = value;
+		this.source = source;
+		this.setTimestamp(timestamp);
+	}
 	
 	/**
 	 * Converts the instance to an output string suitable for sending to the meter plugin manager.
@@ -63,56 +101,55 @@ public class Measure {
 	/**
 	 * Returns the metric identifier that is associated with this instance.
 	 * 
-	 * @return String identifies the metric
+	 * @return {@link String} metric identifier
 	 */
     public String getName() {
 		return name;
 	}
 
-    /**
-     * Set the metric identifier of this instance.
-     * 
-     * @param name
-     */
-	public void setName(String name) {
-		this.name = name;
-	}
-
 	/**
 	 * Returns the value of the measure instance.
 	 * 
-	 * @return
+	 * @return {@link Number}
 	 */
-	public String getValue() {
+	public Number getValue() {
 		return value;
 	}
 
 	/**
 	 * Set the value of this measure instance.
-	 * @param value
+	 * 
+	 * @param value {@link Number}
 	 */
-	public void setValue(String value) {
+	public void setValue(Number value) {
 		this.value = value;
 	}
 
 	/**
+	 * Returns the metric source
 	 * 
-	 * @return
+	 * @return {@String}
 	 */
 	public String getSource() {
 		return source;
 	}
 
-	public void setSource(String source) {
-		this.source = source;
-	}
-
+	/**
+	 * Returns the timestamp
+	 * 
+	 * @return {@Date}
+	 */
 	public Date getTimestamp() {
-		//return new Date(timestamp.getTime());
 		return (Date)timestamp.clone();
 	}
 
-	public void setTimestamp(Date timestamp) {
+	/**
+	 * Private method that handles copying to ensure that
+	 * the {@Measure} instances cannot be mutated externally
+	 * 
+	 * @param timestamp {@link Date}
+	 */
+	private void setTimestamp(Date timestamp) {
 		this.timestamp = (Date)timestamp.clone();
 	}
 }
