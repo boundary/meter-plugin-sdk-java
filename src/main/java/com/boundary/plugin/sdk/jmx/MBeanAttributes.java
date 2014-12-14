@@ -16,12 +16,12 @@ package com.boundary.plugin.sdk.jmx;
 
 public class MBeanAttributes {
 	
-	private enum MetricType {standard};
+	public enum MetricType {standard};
 	
 	private String attribute;
 	private String metricName;
 	private MetricType metricType;
-	private boolean enabled;
+	private boolean enabled = true;
 	
 	public String getAttribute() {
 		return attribute;

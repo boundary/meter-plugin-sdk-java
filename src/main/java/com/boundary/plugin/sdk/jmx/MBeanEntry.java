@@ -20,7 +20,7 @@ public class MBeanEntry {
 	
 	private String objectName;
 	private ArrayList<MBeanAttributes> attributes;
-	private boolean enabled;
+	private boolean enabled = true;
 	
 	public String getObjectName() {
 		return objectName;
