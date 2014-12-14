@@ -72,6 +72,15 @@
       <version>${log4j-version}</version>
    </dependency>
   </dependencies>
+  <reporting>
+   <plugins>
+     <plugin>
+       <groupId>org.codehaus.mojo</groupId>
+       <artifactId>findbugs-maven-plugin</artifactId>
+       <version>${findbugs-maven-plugin-version}</version>
+     </plugin>
+   </plugins>
+  </reporting>
   <build>
     <plugins>
       <plugin>
