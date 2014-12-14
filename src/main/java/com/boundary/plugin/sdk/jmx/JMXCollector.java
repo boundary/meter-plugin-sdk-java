@@ -97,14 +97,14 @@ public class JMXCollector implements Collector {
 			
 		}
 		
-		Measure m = new Measure();
+		String source = null;
 		if (item.getSource() == null) {
-			m.setSource(PluginUtil.getHostname());
+			source = PluginUtil.getHostname();
 		}
 		else {
-			m.setSource(item.getSource());
+			source = item.getSource();
 		}
-		
+
 		while(true) {
 			try {
 				long start = new Date().getTime();
@@ -113,9 +113,8 @@ public class JMXCollector implements Collector {
 					ObjectInstance instance = connection.getObjectInstance(name);
 					for (MBeanAttributes attr : entry.getAttributes()) {
 						Object obj = connection.getAttribute(instance.getObjectName(),attr.getAttribute());
-						m.setName(attr.getMetricName());
-						m.setValue(obj.getClass().cast(obj).toString());
-						m.setTimestamp(new Date());
+						Number v = (Number)obj.getClass().cast(obj);
+						Measure m = new Measure(attr.getMetricName(),v);
 						output.send(m);
 					}
 				}
