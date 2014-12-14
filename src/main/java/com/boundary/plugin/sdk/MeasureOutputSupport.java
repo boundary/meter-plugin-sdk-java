@@ -29,7 +29,7 @@ public class MeasureOutputSupport {
 	
 	/**
 	 * Factory method to get a {@link MeasurementSink}
-	 * @param type {@link enum Output}
+	 * @param type {@link Type Output}
 	 * @return {@link MeasurementSink}
 	 */
 	public static MeasurementSink getInstance(Type type) {

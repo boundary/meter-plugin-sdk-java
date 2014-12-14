@@ -15,19 +15,16 @@
 package com.boundary.plugin.sdk;
 
 /**
- * Stub class for handling post install configuration
+ * Marker interface for any class that needs to run post install
  *
  */
-public class PostInstall {
-
-	/**
-	 * Default constructor
-	 */
-	public PostInstall() {
-
-	}
+public interface PostInstall {
 	
-	public static void main(String[] args) {
-		System.exit(0);
-	}
+	/**
+	 * Called by the Plugin SDK framework for the plugin to
+	 * execute code post install.
+	 * @param args Arguments passed to the command
+	 */
+	// TODO, Meter info, platform information, etc
+	public void execute(String[] args);
 }

@@ -105,7 +105,7 @@ public class JMXClient {
 	 * TODO: Better handling of the exceptions, duplicate display names
 	 * 
 	 * @param name Display name of the VM.
-	 * @throws Exception
+	 * @return {@link boolean}
 	 */
 	public boolean connect(String name) {
 		boolean connected = false;
@@ -147,7 +147,7 @@ public class JMXClient {
 	 * 
 	 * @param host hostname where the jvm is running
 	 * @param port Listening port of the jvm
-	 * @returns boolean
+	 * @return {@link boolean}
 	 */
 	public boolean connect(String host, int port) {
 		boolean connected = false;
@@ -167,9 +167,9 @@ public class JMXClient {
 	 * @param port Listening port of the jvm
 	 * @param user User name to used to authenticate
 	 * @param password Credentials used to authenticate
-	 * @throws Exception
+	 * @return {@link boolean}
 	 */
-	public boolean connect(String host,int port,String user,String password) throws Exception {
+	public boolean connect(String host,int port,String user,String password) {
 		boolean connected = false;
 
 		try {
@@ -185,9 +185,9 @@ public class JMXClient {
 	
 	/**
 	 * Encapsulates a query to a {@link MBeanServerConnection}
-	 * @param mbeanName
-	 * @return {@link Set<ObjectInstance>} returns null if the query fails
-	 * @throws IOException 
+	 * 
+	 * @param mbeanName MBean to query the jvm for
+	 * @return {@link Set} returns null if the query fails
 	 */
 	public Set<ObjectInstance> queryMBeans(ObjectName mbeanName) {
 		Set<ObjectInstance> result = null;

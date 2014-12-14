@@ -35,7 +35,8 @@ public interface Plugin <T> {
 	
 	/**
 	 * Sets the dispatcher associated with the plugin
-	 * @param dispatcher
+	 * 
+	 * @param dispatcher {@link PluginDispatcher}
 	 */
 	public void setDispatcher(PluginDispatcher dispatcher);
 
