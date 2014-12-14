@@ -126,18 +126,18 @@ public class Measure {
 	}
 
 	/**
-	 * Returns the metric source
+	 * Returns the metric source for the measurement
 	 * 
-	 * @return {@String}
+	 * @return {@link String}
 	 */
 	public String getSource() {
 		return source;
 	}
 
 	/**
-	 * Returns the timestamp
+	 * Returns the timestamp when the measurement value was collected.
 	 * 
-	 * @return {@Date}
+	 * @return {@link Date}
 	 */
 	public Date getTimestamp() {
 		return (Date)timestamp.clone();
