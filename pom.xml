@@ -7,39 +7,53 @@
   <artifactId>java-plugin-framework</artifactId>
   <version>1.0.0</version>
   <properties>
+    <!-- Plugin Versions -->
     <maven-compiler-version>3.1</maven-compiler-version>
     <maven-javadoc-plugin-version>2.9.1</maven-javadoc-plugin-version>
+    
     <java-target-version>1.8</java-target-version>
     <java-source-version>1.8</java-source-version>
+    
+    <!-- Dependency Versions -->
+    <core-version>1.0-b02</core-version>
+    <findbugs-maven-plugin-version>3.0.0</findbugs-maven-plugin-version>
+    <guava-version>18.0</guava-version>
     <slf4j-api-version>1.7.7</slf4j-api-version>
     <slf4j-log4j12-version>1.7.7</slf4j-log4j12-version>
     <log4j-version>1.2.17</log4j-version>
+    <jackson-version>2.4.3</jackson-version>
+    <junit-version>4.11</junit-version>
   </properties>
   <dependencies>
     <dependency>
       <groupId>com.betfair.net.java.opendmk</groupId>
       <artifactId>core</artifactId>
-      <version>1.0-b02</version>
+      <version>${core-version}</version>
+    </dependency>
+    <dependency>
+	  <groupId>com.google.guava</groupId>
+	  <artifactId>guava</artifactId>
+	  <version>${guava-version}</version>
     </dependency>
     <dependency>
       <groupId>junit</groupId>
       <artifactId>junit</artifactId>
-      <version>4.11</version>
+      <version>${junit-version}</version>
     </dependency>
     <dependency>
       <groupId>com.fasterxml.jackson.core</groupId>
       <artifactId>jackson-core</artifactId>
-      <version>2.4.3</version>
+      <version>${jackson-version}</version>
     </dependency>
     <dependency>
 	<groupId>com.fasterxml.jackson.core</groupId>
 	<artifactId>jackson-annotations</artifactId>
-	<version>2.4.3</version>
+	<version>${jackson-version}</version>
     </dependency>
     <dependency>
       <groupId>com.fasterxml.jackson.core</groupId>
       <artifactId>jackson-databind</artifactId>
-      <version>2.4.3</version>
+      <version>${jackson-version}</version>
     </dependency>
     <dependency>
       <groupId>org.slf4j</groupId>
