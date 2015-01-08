@@ -18,6 +18,8 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Formatter;
 import java.util.Hashtable;
 import java.util.List;
@@ -32,6 +34,7 @@ import javax.management.MBeanServerConnection;
 import javax.management.ObjectName;
 import javax.management.ReflectionException;
 
+import com.boundary.plugin.sdk.PluginUtil;
 import org.apache.commons.cli.BasicParser;
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.CommandLineParser;
@@ -43,6 +46,7 @@ import org.apache.commons.cli.Options;
 import com.fasterxml.jackson.core.JsonGenerationException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.common.base.Joiner;
 
 /**
  * Export the MBeans from a running JVM process into a JSON file
@@ -77,6 +81,9 @@ public class ExportMBeans {
 	private Option portOption;
 	private CommandLine cmd;
 
+	/**
+	 * Constructor
+	 */
 	public ExportMBeans() {
 		options = new Options();
 		this.jmxClient = new JMXClient();
@@ -138,20 +145,31 @@ public class ExportMBeans {
 		return builder.toString();
 	}
 
+	/**
+	 * 
+	 * @param name
+	 * @param entry
+	 */
 	private void getBeanAttributes(ObjectName name, MBeanEntry entry) {
 		MBeanInfo info;
+		HashSet<String> checkTypes = new HashSet<String>();
+		checkTypes.add("long");
+		checkTypes.add("int");
+		checkTypes.add("javax.management.openmbean.CompositeData");
+		checkTypes.add("[Ljavax.management.openmbean.CompositeData;");
 		try {
 			info = this.connection.getMBeanInfo(name);
 			MBeanAttributeInfo[] attributes = info.getAttributes();
 			ArrayList<MBeanAttributes> mbeanAttributes = new ArrayList<MBeanAttributes>();
 			for (MBeanAttributeInfo attrInfo : attributes) {
+				if (checkTypes.contains(attrInfo.getType())) {
 				MBeanAttributes attr = new MBeanAttributes();
-				String attrName = attrInfo.getName() + ":" + attrInfo.getType() + ":"
-						+ attrInfo.getDescription();
 				attr.setAttribute(attrInfo.getName());
+				attr.setDataType(attrInfo.getType());
 				attr.setMetricType(MBeanAttributes.MetricType.standard);
 				attr.setMetricName(this.getMetricName(name,attrInfo));
 				mbeanAttributes.add(attr);
+				}
 			}
 			entry.setAttributes(mbeanAttributes);
 		} catch (Exception e) {

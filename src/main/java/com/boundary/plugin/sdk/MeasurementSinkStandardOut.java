@@ -14,9 +14,29 @@
 
 package com.boundary.plugin.sdk;
 
-public class MeasureOutputAPI extends MeasureOutputStandardOut {
+/**
+ * TODO: Provide for a separate thread to handle the output so that callers
+ * can be asynchronous.
+ * 
+ * @author davidg
+ *
+ */
+public class MeasurementSinkStandardOut implements MeasurementSink, Runnable {
+	
+	public MeasurementSinkStandardOut() {
+		
+	}
 
-	public MeasureOutputAPI() {
+	@Override
+	public synchronized void send(Measurement m) {
+		System.out.println(m);
+	}
+
+	@Override
+	public void run() {
+		// TODO Auto-generated method stub
 		
 	}
 }
+
+

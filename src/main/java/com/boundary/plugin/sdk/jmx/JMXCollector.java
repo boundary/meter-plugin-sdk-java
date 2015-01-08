@@ -37,8 +37,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.boundary.plugin.sdk.Collector;
-import com.boundary.plugin.sdk.Measure;
-import com.boundary.plugin.sdk.MeasureOutput;
+import com.boundary.plugin.sdk.Measurement;
+import com.boundary.plugin.sdk.MeasurementSink;
 import com.boundary.plugin.sdk.PluginUtil;
 
 /**
@@ -64,13 +64,13 @@ public class JMXCollector implements Collector {
 	private JMXClient client;
 	private JMXPluginConfigurationItem item;
 	private MBeanMap mbeanMap;
-	private MeasureOutput output;
+	private MeasurementSink output;
 	private String name;
 
 	public JMXCollector(String name,
 			JMXPluginConfigurationItem item,
 			MBeanMap mbeanMap,
-			MeasureOutput output) {
+			MeasurementSink output) {
 		this.name = name;
 		this.client = new JMXClient();
 		this.item = item;
@@ -79,7 +79,7 @@ public class JMXCollector implements Collector {
 	}
 
 	@Override
-	public Measure[] getMeasures() {
+	public Measurement[] getMeasures() {
 		// TODO Auto-generated method stub
 		return null;
 	}
@@ -97,14 +97,14 @@ public class JMXCollector implements Collector {
 			
 		}
 		
-		Measure m = new Measure();
+		String source = null;
 		if (item.getSource() == null) {
-			m.setSource(PluginUtil.getHostname());
+			source = PluginUtil.getHostname();
 		}
 		else {
-			m.setSource(item.getSource());
+			source = item.getSource();
 		}
-		
+
 		while(true) {
 			try {
 				long start = new Date().getTime();
@@ -113,9 +113,8 @@ public class JMXCollector implements Collector {
 					ObjectInstance instance = connection.getObjectInstance(name);
 					for (MBeanAttributes attr : entry.getAttributes()) {
 						Object obj = connection.getAttribute(instance.getObjectName(),attr.getAttribute());
-						m.setName(attr.getMetricName());
-						m.setValue(obj.getClass().cast(obj).toString());
-						m.setTimestamp(new Date());
+						Number v = (Number)obj.getClass().cast(obj);
+						Measurement m = new Measurement(attr.getMetricName(),v);
 						output.send(m);
 					}
 				}

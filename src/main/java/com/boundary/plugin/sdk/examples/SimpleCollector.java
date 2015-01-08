@@ -3,10 +3,10 @@ package com.boundary.plugin.sdk.examples;
 import java.util.Random;
 
 import com.boundary.plugin.sdk.Collector;
-import com.boundary.plugin.sdk.Measure;
-import com.boundary.plugin.sdk.MeasureOutput;
-import com.boundary.plugin.sdk.MeasureOutputSupport;
-import com.boundary.plugin.sdk.MeasureOutputSupport.Type;
+import com.boundary.plugin.sdk.Measurement;
+import com.boundary.plugin.sdk.MeasurementSink;
+import com.boundary.plugin.sdk.MeasurementSinkFactory;
+import com.boundary.plugin.sdk.MeasurementSinkFactory.Type;
 
 public class SimpleCollector implements Collector {
 
@@ -17,24 +17,20 @@ public class SimpleCollector implements Collector {
 	}
 
 	@Override
-	public Measure[] getMeasures() {
+	public Measurement[] getMeasures() {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
 	public void run() {
-		MeasureOutput output = MeasureOutputSupport.getInstance(Type.STDOUT);
+		MeasurementSink output = MeasurementSinkFactory.getInstance(Type.STDOUT);
 		Random rand = new Random();
 		
 		while(true) {
 			try {
-				Measure m = new Measure();
-				m.setName("SIMPLE_METRIC");
-				m.setSource(name);
-
-				int  n = rand.nextInt(50) + 1;
-				m.setValue(Integer.toString(n));
+				Number  n = rand.nextInt(50) + 1;
+				Measurement m = new Measurement("SIMPLE_METRIC",n);
 				
 				output.send(m);
 				

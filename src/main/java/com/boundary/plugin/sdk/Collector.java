@@ -2,7 +2,7 @@ package com.boundary.plugin.sdk;
 
 public interface Collector extends Runnable {
 	
-	public Measure [] getMeasures();
+	public Measurement [] getMeasures();
 	
 	void run();
 

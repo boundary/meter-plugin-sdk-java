@@ -14,29 +14,6 @@
 
 package com.boundary.plugin.sdk;
 
-/**
- * TODO: Provide for a separate thread to handle the output so that callers
- * can be asynchronous.
- * 
- * @author davidg
- *
- */
-public class MeasureOutputStandardOut implements MeasureOutput, Runnable {
-	
-	public MeasureOutputStandardOut() {
-		
-	}
+class CollectorScheduler {
 
-	@Override
-	public synchronized void send(Measure m) {
-		System.out.println(m);
-	}
-
-	@Override
-	public void run() {
-		// TODO Auto-generated method stub
-		
-	}
 }
-
-

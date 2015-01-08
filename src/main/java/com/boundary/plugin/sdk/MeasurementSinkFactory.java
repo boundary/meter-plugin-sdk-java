@@ -15,13 +15,12 @@
 package com.boundary.plugin.sdk;
 
 /**
- * Factory for {@link MeasureOutput} types.
- *
+ * Factory for {@link MeasurementSink} types.
  */
-public class MeasureOutputSupport {
+public class MeasurementSinkFactory {
 	
-	private static MeasureOutputStandardOut measureStandardOut = new MeasureOutputStandardOut();
-	private static MeasureOutputAPI measureAPI = new MeasureOutputAPI();
+	private static MeasurementSinkStandardOut measureStandardOut = new MeasurementSinkStandardOut();
+	private static MeasurementSinkAPI measureAPI = new MeasurementSinkAPI();
 	
 	public enum Type {
 		STDOUT,
@@ -29,12 +28,12 @@ public class MeasureOutputSupport {
 	};
 	
 	/**
-	 * Factory method to get a {@link MeasureOutput}
-	 * @param type {@link enum Output}
-	 * @return {@link MeasureOutput}
+	 * Factory method to get a {@link MeasurementSink}
+	 * @param type {@link Type Output}
+	 * @return {@link MeasurementSink}
 	 */
-	public static MeasureOutput getInstance(Type type) {
-		MeasureOutput instance = null;
+	public static MeasurementSink getInstance(Type type) {
+		MeasurementSink instance = null;
 		switch(type) {
 			case STDOUT:
 			case API:

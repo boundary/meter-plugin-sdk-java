@@ -15,6 +15,7 @@
 package com.boundary.plugin.sdk;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import javax.validation.constraints.Max;
 
 public class MetricDefinition {
     /**
@@ -35,6 +36,7 @@ public class MetricDefinition {
     /**
      * Terse short name when referring to the metric and space is limited, less than 15 characters preferred. (optional if updating)
      */
+    @Max(20)
     @JsonProperty
     private String displayNameShort;
     /**
@@ -59,15 +61,113 @@ public class MetricDefinition {
     @JsonProperty
     private boolean isDisabled;
 
+    /**
+     * Default constructor
+     */
     public MetricDefinition() {
         this.name = "";
         this.description = "";
         this.displayName = "";
         this.displayNameShort = "";
-        this.unit = "";
-        this.defaultAggregate = "";
+        this.unit = "number";
+        this.defaultAggregate = "avg";
         this.defaultResolutionMS = 1000L;
         this.isDisabled = false;
     }
+    
+    /**
+     * Creates a metric definition from the provided values
+     * 
+     * @param name metric identifier
+     */
+    public MetricDefinition(String name) {
+    	this.name = name;
+    	this.description = name;
+    	this.displayName = name;
+    	this.displayNameShort = name;
+        this.unit = "number";
+        this.defaultAggregate = "avg";
+        this.defaultResolutionMS = 1000L;
+        this.isDisabled = false;
+    }
+
+    /**
+     * Returns the metric identifier
+     * 
+     * @return {@link String}
+     */
+	public String getName() {
+		return name;
+	}
+
+	/**
+	 * Sets the metric identifier
+	 * 
+	 * @param name metric identifier
+	 */
+	public void setName(String name) {
+		this.name = name;
+	}
+
+	/**
+	 * Returns the description of the metric
+	 * 
+	 * @return {@link String}
+	 */
+	public String getDescription() {
+		return description;
+	}
+
+	public void setDescription(String description) {
+		this.description = description;
+	}
+
+	public String getDisplayName() {
+		return displayName;
+	}
+
+	public void setDisplayName(String displayName) {
+		this.displayName = displayName;
+	}
+
+	public String getDisplayNameShort() {
+		return displayNameShort;
+	}
+
+	public void setDisplayNameShort(String displayNameShort) {
+		this.displayNameShort = displayNameShort;
+	}
+
+	public String getUnit() {
+		return unit;
+	}
+
+	public void setUnit(String unit) {
+		this.unit = unit;
+	}
+
+	public String getDefaultAggregate() {
+		return defaultAggregate;
+	}
+
+	public void setDefaultAggregate(String defaultAggregate) {
+		this.defaultAggregate = defaultAggregate;
+	}
+
+	public long getDefaultResolutionMS() {
+		return defaultResolutionMS;
+	}
+
+	public void setDefaultResolutionMS(long defaultResolutionMS) {
+		this.defaultResolutionMS = defaultResolutionMS;
+	}
+
+	public boolean isDisabled() {
+		return isDisabled;
+	}
+
+	public void setDisabled(boolean isDisabled) {
+		this.isDisabled = isDisabled;
+	}
 }
 
