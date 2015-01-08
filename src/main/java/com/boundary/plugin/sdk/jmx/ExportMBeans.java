@@ -18,6 +18,8 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -29,10 +31,21 @@ import javax.management.MBeanServerConnection;
 import javax.management.ObjectName;
 import javax.management.ReflectionException;
 
+import com.boundary.plugin.sdk.PluginUtil;
 import com.fasterxml.jackson.core.JsonGenerationException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.common.base.Joiner;
 
+/**
+ * Program the extracts MBeans from a running VM and converts to JSON.
+ *
+ * <pre>
+ * $ java com.boundary.plugin.sdk.jmx.ExportMBeans
+ * usage: com.boundary.plugin.sdk.jmx.ExportMBeans [virtual machine display name | host port]
+ * </pre>
+ *
+ */
 public class ExportMBeans {
 
 	private String vmDisplayName = null;
@@ -44,16 +57,28 @@ public class ExportMBeans {
 	private boolean useAttach;
 	private MBeanMap map;
 
+	/**
+	 * Constructor
+	 */
 	public ExportMBeans() {
 		this.jmxClient = new JMXClient();
 		this.map = new MBeanMap();
 	}
 
+	/**
+	 * Writes a usage statement if insufficient arguments are provide
+	 * on the command line.
+	 */
 	private void usage() {
-		System.out.println("usage: " + this.getClass()
+		System.err.println("usage: " + this.getClass()
 				+ " [virtual machine display name | host port]");
 	}
 
+	/**
+	 * Process the arguments passed on the command line
+	 * 
+	 * @param args command line arguments
+	 */
 	private void handleArguments(String[] args) {
 		if (args.length == 1) {
 			this.vmDisplayName = args[0];
@@ -68,6 +93,11 @@ public class ExportMBeans {
 		}
 	}
 
+	/**
+	 * Connects to a JVM using the attach API.
+	 * 
+	 * @return {@link boolean} <code>true</code> if connection was successful, <code>false</code> otherwise.
+	 */
 	private boolean connectAttach() {
 		boolean connected = false;
 		if (jmxClient.connect(this.vmDisplayName)) {
@@ -80,6 +110,11 @@ public class ExportMBeans {
 		return connected;
 	}
 
+	/**
+	 * Connects to JVM using a hostname and port
+	 * 
+	 * @return {@link boolean} <code>true</code>, if connection is successful, <code>false</code> otherwise.
+	 */
 	private boolean connectHostPort() {
 		boolean connected = false;
 		if (jmxClient.connect(this.host, this.port)) {
@@ -92,6 +127,11 @@ public class ExportMBeans {
 		return connected;
 	}
 
+	/**
+	 * Handle connecting to the JVM
+	 * 
+	 * @return {@link boolean} <code>true</code>, if connection is successful, <code>false</code> otherwise.
+	 */
 	private boolean connect() {
 		boolean connected = false;
 		if (this.useAttach) {
@@ -103,6 +143,9 @@ public class ExportMBeans {
 		return connected;
 	}
 
+	/**
+	 * Returns a list of domains within the JVM.
+	 */
 	private void getDomains() {
 		try {
 			this.domains = this.connection.getDomains();
@@ -111,26 +154,61 @@ public class ExportMBeans {
 		}
 	}
 	
-	private String getMetricName(ObjectName name,MBeanAttributeInfo info) {
+	private String generateMetricName(ObjectName o,MBeanAttributeInfo info) {
+		Joiner joiner = Joiner.on('.');
+		String s = o.getCanonicalName().toUpperCase();
+	    String [] strs1 = s.split(":");
+	    String [] strs2 = strs1[1].split(",");
+
+	    ArrayList<String> lstr = new ArrayList<String>();
+	    for (String s2 : strs1[1].split(",")) {
+	    	lstr.add(s2.split("=")[1]);
+	    }
+	    
+	    String s1 = lstr.toString().replaceAll("\\[","").replaceAll("\\]","").replaceAll(",", "").replaceAll("\\s",".");
+
+		return joiner.join("BOUNDARY","JMX",strs1[0],s1,PluginUtil.toUpperUnderscore(info.getName(),'.'));
+	}
+	
+	/**
+	 * 
+	 * @param name {@link ObjectName} name of the MBean
+	 * @param info {@link MBeanAttributeInfo}
+	 * @return {@link String}
+	 */
+	private String getMetricName(ObjectName o,MBeanAttributeInfo info) {
 		StringBuffer buffer = new StringBuffer();
-		buffer.append(name.getDomain());
+		
+		String metricName = this.generateMetricName(o,info);
+		buffer.append(metricName);
 		return buffer.toString();
 	}
 
+	/**
+	 * 
+	 * @param name
+	 * @param entry
+	 */
 	private void getBeanAttributes(ObjectName name, MBeanEntry entry) {
 		MBeanInfo info;
+		HashSet<String> checkTypes = new HashSet<String>();
+		checkTypes.add("long");
+		checkTypes.add("int");
+		checkTypes.add("javax.management.openmbean.CompositeData");
+		checkTypes.add("[Ljavax.management.openmbean.CompositeData;");
 		try {
 			info = this.connection.getMBeanInfo(name);
 			MBeanAttributeInfo[] attributes = info.getAttributes();
 			ArrayList<MBeanAttributes> mbeanAttributes = new ArrayList<MBeanAttributes>();
 			for (MBeanAttributeInfo attrInfo : attributes) {
+				if (checkTypes.contains(attrInfo.getType())) {
 				MBeanAttributes attr = new MBeanAttributes();
-				String attrName = attrInfo.getName() + ":" + attrInfo.getType() + ":"
-						+ attrInfo.getDescription();
 				attr.setAttribute(attrInfo.getName());
+				attr.setDataType(attrInfo.getType());
 				attr.setMetricType(MBeanAttributes.MetricType.standard);
 				attr.setMetricName(this.getMetricName(name,attrInfo));
 				mbeanAttributes.add(attr);
+				}
 			}
 			entry.setAttributes(mbeanAttributes);
 		} catch (Exception e) {

@@ -17,10 +17,10 @@ package com.boundary.plugin.sdk;
 /**
  * Factory for {@link MeasurementSink} types.
  */
-public class MeasureOutputSupport {
+public class MeasurementSinkFactory {
 	
-	private static MeasureOutputStandardOut measureStandardOut = new MeasureOutputStandardOut();
-	private static MeasureOutputAPI measureAPI = new MeasureOutputAPI();
+	private static MeasurementSinkStandardOut measureStandardOut = new MeasurementSinkStandardOut();
+	private static MeasurementSinkAPI measureAPI = new MeasurementSinkAPI();
 	
 	public enum Type {
 		STDOUT,

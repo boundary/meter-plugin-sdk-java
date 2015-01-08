@@ -25,7 +25,7 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 
 /**
- * Unit tests for {@link Measure}
+ * Unit tests for {@link Measurement}
  */
 public class MeasureTest {
 	
@@ -51,7 +51,7 @@ public class MeasureTest {
 	public void tearDown() throws Exception {
 	}
 	
-	private static void assertFields(String name,Number value,String source,Date timestamp,Measure m) {
+	private static void assertFields(String name,Number value,String source,Date timestamp,Measurement m) {
 		if (name != null) {
 			assertEquals("check getName()",name,m.getName());
 		}
@@ -68,31 +68,31 @@ public class MeasureTest {
 	
 	@Test
 	public void testDefaultConstructor() {
-		Measure m = new Measure();
+		Measurement m = new Measurement();
 		assertFields("",0,"",null,m);
 	}
 	
 	@Test
 	public void test2ArgumentConstructor() {
-		Measure m = new Measure(NAME,VALUE);
+		Measurement m = new Measurement(NAME,VALUE);
 		assertFields(NAME,VALUE,null,null,m);
 	}
 
 	@Test
 	public void test3ArgumentConstructor() {
-		Measure m = new Measure(NAME,VALUE,SOURCE);
+		Measurement m = new Measurement(NAME,VALUE,SOURCE);
 		assertFields(NAME,VALUE,SOURCE,null,m);
 	}
 	
 	@Test
 	public void test4ArgumentConstructor() {
-		Measure m = new Measure(NAME,VALUE,SOURCE,TIMESTAMP);
+		Measurement m = new Measurement(NAME,VALUE,SOURCE,TIMESTAMP);
 		assertFields(NAME,VALUE,SOURCE,TIMESTAMP,m);
 	}
 	
 	@Test
 	public void testSourceMutablity() throws InterruptedException {
-		Measure m = new Measure(NAME,VALUE,SOURCE,TIMESTAMP);
+		Measurement m = new Measurement(NAME,VALUE,SOURCE,TIMESTAMP);
 		Date d = m.getTimestamp();
 		Thread.sleep(1000);
 		d = new Date();

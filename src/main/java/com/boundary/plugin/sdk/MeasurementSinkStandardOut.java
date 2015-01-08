@@ -21,14 +21,14 @@ package com.boundary.plugin.sdk;
  * @author davidg
  *
  */
-public class MeasureOutputStandardOut implements MeasurementSink, Runnable {
+public class MeasurementSinkStandardOut implements MeasurementSink, Runnable {
 	
-	public MeasureOutputStandardOut() {
+	public MeasurementSinkStandardOut() {
 		
 	}
 
 	@Override
-	public synchronized void send(Measure m) {
+	public synchronized void send(Measurement m) {
 		System.out.println(m);
 	}
 

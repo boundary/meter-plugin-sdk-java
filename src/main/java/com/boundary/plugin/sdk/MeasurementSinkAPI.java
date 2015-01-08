@@ -14,6 +14,9 @@
 
 package com.boundary.plugin.sdk;
 
-public class PluginScheduler {
+public class MeasurementSinkAPI extends MeasurementSinkStandardOut {
 
+	public MeasurementSinkAPI() {
+		
+	}
 }

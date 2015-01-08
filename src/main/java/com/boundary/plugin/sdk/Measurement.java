@@ -22,7 +22,7 @@ import static com.google.common.base.Preconditions.*;
  * by a plugin.
  *
  */
-public class Measure {
+public class Measurement {
 	
     private String name;
     private Number value;
@@ -32,7 +32,7 @@ public class Measure {
     /**
      * Default constructor
      */
-	public Measure() {
+	public Measurement() {
     	name = "";
     	value = 0;
     	source = "";
@@ -45,7 +45,7 @@ public class Measure {
 	 * @param name metric identifier
 	 * @param value metric value
 	 */
-	public Measure(String name,Number value) {
+	public Measurement(String name,Number value) {
 		this(name,value,"",new Date());
 	}
 	
@@ -55,7 +55,7 @@ public class Measure {
 	 * @param value metric value
 	 * @param source metric source
 	 */
-	public Measure(String name,Number value,String source) {
+	public Measurement(String name,Number value,String source) {
 		this(name,value,source,new Date());
 	}
 	
@@ -67,7 +67,7 @@ public class Measure {
 	 * @param source metric source
 	 * @param timestamp metric timestamp
 	 */
-	public Measure(String name,Number value,String source,Date timestamp) {
+	public Measurement(String name,Number value,String source,Date timestamp) {
 		checkNotNull(name);
 		checkNotNull(value);
 		checkNotNull(source);

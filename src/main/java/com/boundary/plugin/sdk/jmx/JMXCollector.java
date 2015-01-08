@@ -37,7 +37,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.boundary.plugin.sdk.Collector;
-import com.boundary.plugin.sdk.Measure;
+import com.boundary.plugin.sdk.Measurement;
 import com.boundary.plugin.sdk.MeasurementSink;
 import com.boundary.plugin.sdk.PluginUtil;
 
@@ -79,7 +79,7 @@ public class JMXCollector implements Collector {
 	}
 
 	@Override
-	public Measure[] getMeasures() {
+	public Measurement[] getMeasures() {
 		// TODO Auto-generated method stub
 		return null;
 	}
@@ -114,7 +114,7 @@ public class JMXCollector implements Collector {
 					for (MBeanAttributes attr : entry.getAttributes()) {
 						Object obj = connection.getAttribute(instance.getObjectName(),attr.getAttribute());
 						Number v = (Number)obj.getClass().cast(obj);
-						Measure m = new Measure(attr.getMetricName(),v);
+						Measurement m = new Measurement(attr.getMetricName(),v);
 						output.send(m);
 					}
 				}

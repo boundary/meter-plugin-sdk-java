@@ -14,9 +14,6 @@
 
 package com.boundary.plugin.sdk;
 
-public class MeasureOutputAPI extends MeasureOutputStandardOut {
+class CollectorScheduler {
 
-	public MeasureOutputAPI() {
-		
-	}
 }

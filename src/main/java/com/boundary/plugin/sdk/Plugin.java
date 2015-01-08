@@ -36,9 +36,9 @@ public interface Plugin <T> {
 	/**
 	 * Sets the dispatcher associated with the plugin
 	 * 
-	 * @param dispatcher {@link PluginDispatcher}
+	 * @param dispatcher {@link CollectorDispatcher}
 	 */
-	public void setDispatcher(PluginDispatcher dispatcher);
+	public void setDispatcher(CollectorDispatcher dispatcher);
 
 	/**
 	 * Called when the plugin is to start running.

@@ -14,7 +14,7 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-public class MeasureWriterTest {
+public class MeasurementSinkStandardOutTest {
 	private PrintStream old;
 	ByteArrayOutputStream baos;
 
@@ -40,9 +40,9 @@ public class MeasureWriterTest {
 
 	@Test
 	public void testWriter() {
-		MeasureOutputStandardOut writer = new MeasureOutputStandardOut();
+		MeasurementSinkStandardOut writer = new MeasurementSinkStandardOut();
 		Date d = new Date();
-		Measure m = new Measure("BOUNDARY_CPU",3.1459,"great-white-north",d);
+		Measurement m = new Measurement("BOUNDARY_CPU",3.1459,"great-white-north",d);
 
 		String expectedOutput = "BOUNDARY_CPU 3.1459 great-white-north " + Long.toString(d.getTime()) + "\n";
 		
@@ -50,5 +50,4 @@ public class MeasureWriterTest {
 		String output = baos.toString();
 		assertEquals("check output",expectedOutput,output);
 	}
-
 }
