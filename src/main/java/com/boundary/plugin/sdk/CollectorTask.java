@@ -1,6 +1,6 @@
 package com.boundary.plugin.sdk;
 
-public class CollectorTask<C> implements Runnable {
+class CollectorTask<C> implements Runnable {
 
 	public CollectorTask() {
 		// TODO Auto-generated constructor stub

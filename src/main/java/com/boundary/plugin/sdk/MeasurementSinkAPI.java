@@ -14,15 +14,9 @@
 
 package com.boundary.plugin.sdk;
 
-public class Source {
-	
-	private String name;
+public class MeasurementSinkAPI extends MeasurementSinkStandardOut {
 
-	public String getName() {
-		return name;
-	}
-
-	public void setName(String name) {
-		this.name = name;
+	public MeasurementSinkAPI() {
+		
 	}
 }

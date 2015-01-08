@@ -18,10 +18,10 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 
-import com.boundary.plugin.sdk.MeasureOutput;
+import com.boundary.plugin.sdk.MeasurementSink;
 import com.boundary.plugin.sdk.Plugin;
 import com.boundary.plugin.sdk.PluginConfiguration;
-import com.boundary.plugin.sdk.PluginDispatcher;
+import com.boundary.plugin.sdk.CollectorDispatcher;
 import com.boundary.plugin.sdk.PluginRunner;
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
@@ -30,8 +30,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 public class SimplePlugin implements Plugin<SimplePluginConfiguration> {
 
 	SimplePluginConfiguration configuration;
-	PluginDispatcher dispatcher;
-	MeasureOutput output;
+	CollectorDispatcher dispatcher;
+	MeasurementSink output;
 
 	@Override
 	public void setConfiguration(SimplePluginConfiguration configuration) {
@@ -57,7 +57,7 @@ public class SimplePlugin implements Plugin<SimplePluginConfiguration> {
 	}
 
 	@Override
-	public void setDispatcher(PluginDispatcher dispatcher) {
+	public void setDispatcher(CollectorDispatcher dispatcher) {
 		this.dispatcher = dispatcher;
 	}
 
@@ -78,7 +78,7 @@ public class SimplePlugin implements Plugin<SimplePluginConfiguration> {
 	}
 
 	@Override
-	public void setMeasureOutput(MeasureOutput output) {
+	public void setMeasureOutput(MeasurementSink output) {
 		this.output = output;
 	}
 }

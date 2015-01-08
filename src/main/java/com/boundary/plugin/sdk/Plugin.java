@@ -20,7 +20,7 @@ package com.boundary.plugin.sdk;
  */
 public interface Plugin <T> {
 	
-	public void setMeasureOutput(MeasureOutput output);
+	public void setMeasureOutput(MeasurementSink output);
 	
 	/**
 	 * Provides a configuration instance for the plugin
@@ -35,9 +35,10 @@ public interface Plugin <T> {
 	
 	/**
 	 * Sets the dispatcher associated with the plugin
-	 * @param dispatcher
+	 * 
+	 * @param dispatcher {@link CollectorDispatcher}
 	 */
-	public void setDispatcher(PluginDispatcher dispatcher);
+	public void setDispatcher(CollectorDispatcher dispatcher);
 
 	/**
 	 * Called when the plugin is to start running.

@@ -23,7 +23,7 @@ import java.util.concurrent.Executors;
  * Handles the running of collectors.
  *
  */
-public class PluginDispatcher {
+public class CollectorDispatcher {
 	
 	Executor executor;
 	List<Collector> collectorList;
@@ -31,7 +31,7 @@ public class PluginDispatcher {
 	/**
 	 * Default constructor
 	 */
-	public PluginDispatcher() {
+	public CollectorDispatcher() {
 		collectorList = new ArrayList<Collector>();
 	}
 	

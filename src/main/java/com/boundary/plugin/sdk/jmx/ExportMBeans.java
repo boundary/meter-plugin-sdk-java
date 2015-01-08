@@ -14,11 +14,14 @@
 
 package com.boundary.plugin.sdk.jmx;
 
+import com.boundary.plugin.sdk.PluginUtil;
+
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Formatter;
+import java.util.HashSet;
 import java.util.Hashtable;
 import java.util.List;
 import java.util.Map.Entry;
@@ -32,6 +35,8 @@ import javax.management.MBeanServerConnection;
 import javax.management.ObjectName;
 import javax.management.ReflectionException;
 
+import com.boundary.plugin.sdk.PluginUtil;
+
 import org.apache.commons.cli.BasicParser;
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.CommandLineParser;
@@ -43,6 +48,7 @@ import org.apache.commons.cli.Options;
 import com.fasterxml.jackson.core.JsonGenerationException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.common.base.Joiner;
 
 /**
  * Export the MBeans from a running JVM process into a JSON file
@@ -68,7 +74,7 @@ public class ExportMBeans {
 	private MBeanMap map;
 	
 	private static final String COMMAND_NAME="ExportMBeans.command.name";
-	private final String METRIC_NAME_SEPARATOR=".";
+	private final char METRIC_NAME_SEPARATOR_CHAR='.';
 	private String commandName;
 	
 	private Options options = new Options();
@@ -77,6 +83,9 @@ public class ExportMBeans {
 	private Option portOption;
 	private CommandLine cmd;
 
+	/**
+	 * Constructor
+	 */
 	public ExportMBeans() {
 		options = new Options();
 		this.jmxClient = new JMXClient();
@@ -85,7 +94,7 @@ public class ExportMBeans {
 		System.out.println();
 	}
 
-	/**
+        /**
 	 * Outputs help for the command and its options.
 	 */
 	private void usage() {
@@ -122,36 +131,53 @@ public class ExportMBeans {
 		}
 	}
 	
+	/**
+	 * 
+	 * @param name {@link ObjectName} name of the MBean
+	 * @param info {@link MBeanAttributeInfo}
+	 * @return {@link String}
+	 */
 	private String getMetricName(ObjectName name,MBeanAttributeInfo info) {
 		StringBuilder builder = new StringBuilder();
 		StringBuilder nameBuilder = new StringBuilder();
 		Hashtable<String, String> keys = name.getKeyPropertyList();
 		for (String s : keys.values()) {
-			nameBuilder.append(METRIC_NAME_SEPARATOR);
-			nameBuilder.append(s);
+			nameBuilder.append(METRIC_NAME_SEPARATOR_CHAR);
+			nameBuilder.append(PluginUtil.toUpperUnderscore(s,METRIC_NAME_SEPARATOR_CHAR));
 		}
 
-		builder.append(String.format("%s%s_%s",
+		builder.append(String.format("%s%s.%s",
 				name.getDomain().toUpperCase(),
 				nameBuilder.toString().toUpperCase(),
-				info.getName().toUpperCase()));
+				PluginUtil.toUpperUnderscore(info.getName(),METRIC_NAME_SEPARATOR_CHAR)));
 		return builder.toString();
 	}
 
+	/**
+	 * 
+	 * @param name
+	 * @param entry
+	 */
 	private void getBeanAttributes(ObjectName name, MBeanEntry entry) {
 		MBeanInfo info;
+		HashSet<String> checkTypes = new HashSet<String>();
+		checkTypes.add("long");
+		checkTypes.add("int");
+		checkTypes.add("javax.management.openmbean.CompositeData");
+		checkTypes.add("[Ljavax.management.openmbean.CompositeData;");
 		try {
 			info = this.connection.getMBeanInfo(name);
 			MBeanAttributeInfo[] attributes = info.getAttributes();
 			ArrayList<MBeanAttributes> mbeanAttributes = new ArrayList<MBeanAttributes>();
 			for (MBeanAttributeInfo attrInfo : attributes) {
+				if (checkTypes.contains(attrInfo.getType())) {
 				MBeanAttributes attr = new MBeanAttributes();
-				String attrName = attrInfo.getName() + ":" + attrInfo.getType() + ":"
-						+ attrInfo.getDescription();
 				attr.setAttribute(attrInfo.getName());
+				attr.setDataType(attrInfo.getType());
 				attr.setMetricType(MBeanAttributes.MetricType.standard);
 				attr.setMetricName(this.getMetricName(name,attrInfo));
 				mbeanAttributes.add(attr);
+				}
 			}
 			entry.setAttributes(mbeanAttributes);
 		} catch (Exception e) {

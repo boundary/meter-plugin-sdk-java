@@ -15,7 +15,7 @@
 package com.boundary.plugin.sdk.snmp;
 
 import com.boundary.plugin.sdk.Collector;
-import com.boundary.plugin.sdk.Measure;
+import com.boundary.plugin.sdk.Measurement;
 
 /**
  * Handles the collection of metrics from a SNMP agent.
@@ -28,7 +28,7 @@ public class SNMPCollector implements Collector {
 	}
 
 	@Override
-	public Measure[] getMeasures() {
+	public Measurement[] getMeasures() {
 		// TODO Auto-generated method stub
 		return null;
 	}

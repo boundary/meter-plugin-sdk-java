@@ -19,6 +19,7 @@ public class MBeanAttributes {
 	public enum MetricType {standard};
 	
 	private String attribute;
+	private String dataType;
 	private String metricName;
 	private MetricType metricType;
 	private boolean enabled = true;
@@ -28,6 +29,12 @@ public class MBeanAttributes {
 	}
 	public void setAttribute(String attribute) {
 		this.attribute = attribute;
+	}
+	public String getDataType() {
+		return dataType;
+	}
+	public void setDataType(String dataType) {
+		this.dataType = dataType;
 	}
 	public String getMetricName() {
 		return metricName;
