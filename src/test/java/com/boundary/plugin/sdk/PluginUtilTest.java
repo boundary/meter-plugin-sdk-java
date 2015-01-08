@@ -50,4 +50,9 @@ public class PluginUtilTest {
 	public void testTrailingSpace() {
 		assertEquals("Check MixedUpperCase","FOO_BAR",PluginUtil.toUpperUnderscore("FOO BAR ",'_'));
 	}
+	
+	@Test
+	public void testMultipleSpaces() {
+		assertEquals("Check MultipleSpaces","PS_SURVIVOR_SPACE",PluginUtil.toUpperUnderscore("PS Survivor Space",'_'));
+	}
 }

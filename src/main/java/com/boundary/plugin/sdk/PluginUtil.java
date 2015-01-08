@@ -28,27 +28,30 @@ public class PluginUtil {
 	 * @return
 	 */
 	public static String toUpperUnderscore(String s, Character d) {
-		StringBuffer buffer = new StringBuffer();
+		StringBuilder builder = new StringBuilder();
 		s = s.trim();
 
 		boolean first = true;
 		for (int i = 0; i < s.length(); i++) {
 			if (Character.isWhitespace(s.charAt(i))) {
-				buffer.append(d);
+				builder.append(d);
 			} else {
 				if (Character.isUpperCase(s.charAt(i))) {
 					if (first == false) {
 						if (i + 1 < s.length()
 								&& Character.isLowerCase(s.charAt(i + 1))) {
-							buffer.append(d);
+							builder.append(d);
 						}
 					}
 				}
-				buffer.append(Character.toUpperCase(s.charAt(i)));
+				builder.append(Character.toUpperCase(s.charAt(i)));
 			}
+			
 			first = false;
 		}
-		return buffer.toString();
+		StringBuilder r = new StringBuilder();
+		r.append('\\').append(d).append('\\').append(d);
+		return builder.toString().replaceAll(r.toString(),d.toString());
 	}
 
 	public static void main(String[] args) {

@@ -14,13 +14,17 @@
 
 package com.boundary.plugin.sdk.jmx;
 
+import com.boundary.plugin.sdk.PluginUtil;
+
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashMap;
+import java.util.Formatter;
 import java.util.HashSet;
+import java.util.Hashtable;
 import java.util.List;
+import java.util.Map.Entry;
 import java.util.Set;
 
 import javax.management.InstanceNotFoundException;
@@ -32,92 +36,84 @@ import javax.management.ObjectName;
 import javax.management.ReflectionException;
 
 import com.boundary.plugin.sdk.PluginUtil;
+
+import org.apache.commons.cli.BasicParser;
+import org.apache.commons.cli.CommandLine;
+import org.apache.commons.cli.CommandLineParser;
+import org.apache.commons.cli.HelpFormatter;
+import org.apache.commons.cli.Option;
+import org.apache.commons.cli.OptionBuilder;
+import org.apache.commons.cli.Options;
+
 import com.fasterxml.jackson.core.JsonGenerationException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.base.Joiner;
 
 /**
- * Program the extracts MBeans from a running VM and converts to JSON.
- *
+ * Export the MBeans from a running JVM process into a JSON file
+ * 
+ * Java Virtual Machine to export the MBeans from must be configured
+ * to communicate over JMX using RMI. The following system properties 
+ * configure the JVM to allow connecting without a password.
+ * 
  * <pre>
- * $ java com.boundary.plugin.sdk.jmx.ExportMBeans
- * usage: com.boundary.plugin.sdk.jmx.ExportMBeans [virtual machine display name | host port]
+ * -Dcom.sun.management.jmxremote.port=PORT
+ * -Dcom.sun.management.jmxremote.authenticate=false
+ * -Dcom.sun.management.jmxremote.ssl=false
  * </pre>
  *
  */
 public class ExportMBeans {
 
-	private String vmDisplayName = null;
 	private JMXClient jmxClient;
 	private MBeanServerConnection connection;
 	private String[] domains;
 	private String host = null;
 	private int port = -1;
-	private boolean useAttach;
 	private MBeanMap map;
+	
+	private static final String COMMAND_NAME="ExportMBeans.command.name";
+	private final char METRIC_NAME_SEPARATOR_CHAR='.';
+	private String commandName;
+	
+	private Options options = new Options();
+	private Option helpOption;
+	private Option hostOption;
+	private Option portOption;
+	private CommandLine cmd;
 
 	/**
 	 * Constructor
 	 */
 	public ExportMBeans() {
+		options = new Options();
 		this.jmxClient = new JMXClient();
 		this.map = new MBeanMap();
+		commandName = System.getProperty(COMMAND_NAME,this.getClass().toString());
+		System.out.println();
 	}
 
-	/**
-	 * Writes a usage statement if insufficient arguments are provide
-	 * on the command line.
+        /**
+	 * Outputs help for the command and its options.
 	 */
 	private void usage() {
-		System.err.println("usage: " + this.getClass()
-				+ " [virtual machine display name | host port]");
+		// automatically generate the help statement
+		HelpFormatter formatter = new HelpFormatter();
+		formatter.printHelp(this.commandName, this.options);
+		System.exit(0);
 	}
 
 	/**
-	 * Process the arguments passed on the command line
+	 * Connects to java virtual machine using RMI
 	 * 
-	 * @param args command line arguments
+	 * @return {@link boolean} returns <code>true</code> if connection successful.
 	 */
-	private void handleArguments(String[] args) {
-		if (args.length == 1) {
-			this.vmDisplayName = args[0];
-			this.useAttach = true;
-		} else if (args.length == 2) {
-			this.host = args[0];
-			this.port = Integer.parseInt(args[1]);
-			this.useAttach = false;
-		} else {
-			usage();
-			System.exit(1);
-		}
-	}
-
-	/**
-	 * Connects to a JVM using the attach API.
-	 * 
-	 * @return {@link boolean} <code>true</code> if connection was successful, <code>false</code> otherwise.
-	 */
-	private boolean connectAttach() {
+	private boolean connect() {
 		boolean connected = false;
-		if (jmxClient.connect(this.vmDisplayName)) {
-			this.connection = jmxClient.getMBeanServerConnection();
-			connected = true;
-		} else {
-			System.err.println("Unable to attach to virtual machine: "
-					+ this.vmDisplayName);
-		}
-		return connected;
-	}
-
-	/**
-	 * Connects to JVM using a hostname and port
-	 * 
-	 * @return {@link boolean} <code>true</code>, if connection is successful, <code>false</code> otherwise.
-	 */
-	private boolean connectHostPort() {
-		boolean connected = false;
-		if (jmxClient.connect(this.host, this.port)) {
+		String host = cmd.getOptionValue("h");
+		int port = Integer.parseInt(cmd.getOptionValue("p"));
+		if (jmxClient.connect(host,port)) {
 			this.connection = jmxClient.getMBeanServerConnection();
 			connected = true;
 		} else {
@@ -127,25 +123,6 @@ public class ExportMBeans {
 		return connected;
 	}
 
-	/**
-	 * Handle connecting to the JVM
-	 * 
-	 * @return {@link boolean} <code>true</code>, if connection is successful, <code>false</code> otherwise.
-	 */
-	private boolean connect() {
-		boolean connected = false;
-		if (this.useAttach) {
-			connected = this.connectAttach();
-		} else {
-			connected = this.connectHostPort();
-		}
-
-		return connected;
-	}
-
-	/**
-	 * Returns a list of domains within the JVM.
-	 */
 	private void getDomains() {
 		try {
 			this.domains = this.connection.getDomains();
@@ -154,34 +131,26 @@ public class ExportMBeans {
 		}
 	}
 	
-	private String generateMetricName(ObjectName o,MBeanAttributeInfo info) {
-		Joiner joiner = Joiner.on('.');
-		String s = o.getCanonicalName().toUpperCase();
-	    String [] strs1 = s.split(":");
-	    String [] strs2 = strs1[1].split(",");
-
-	    ArrayList<String> lstr = new ArrayList<String>();
-	    for (String s2 : strs1[1].split(",")) {
-	    	lstr.add(s2.split("=")[1]);
-	    }
-	    
-	    String s1 = lstr.toString().replaceAll("\\[","").replaceAll("\\]","").replaceAll(",", "").replaceAll("\\s",".");
-
-		return joiner.join("BOUNDARY","JMX",strs1[0],s1,PluginUtil.toUpperUnderscore(info.getName(),'.'));
-	}
-	
 	/**
 	 * 
 	 * @param name {@link ObjectName} name of the MBean
 	 * @param info {@link MBeanAttributeInfo}
 	 * @return {@link String}
 	 */
-	private String getMetricName(ObjectName o,MBeanAttributeInfo info) {
-		StringBuffer buffer = new StringBuffer();
-		
-		String metricName = this.generateMetricName(o,info);
-		buffer.append(metricName);
-		return buffer.toString();
+	private String getMetricName(ObjectName name,MBeanAttributeInfo info) {
+		StringBuilder builder = new StringBuilder();
+		StringBuilder nameBuilder = new StringBuilder();
+		Hashtable<String, String> keys = name.getKeyPropertyList();
+		for (String s : keys.values()) {
+			nameBuilder.append(METRIC_NAME_SEPARATOR_CHAR);
+			nameBuilder.append(PluginUtil.toUpperUnderscore(s,METRIC_NAME_SEPARATOR_CHAR));
+		}
+
+		builder.append(String.format("%s%s.%s",
+				name.getDomain().toUpperCase(),
+				nameBuilder.toString().toUpperCase(),
+				PluginUtil.toUpperUnderscore(info.getName(),METRIC_NAME_SEPARATOR_CHAR)));
+		return builder.toString();
 	}
 
 	/**
@@ -239,7 +208,8 @@ public class ExportMBeans {
 
 		ObjectMapper mapper = new ObjectMapper();
 		try {
-			mapper.writeValue(new File("metric-map.json"), this.map);
+			//mapper.writeValue(new File("metric-map.json"),this.map);
+			mapper.writeValue(System.out,this.map);
 		} catch (JsonGenerationException e) {
 			e.printStackTrace();
 		} catch (JsonMappingException e) {
@@ -260,12 +230,52 @@ public class ExportMBeans {
 
 		this.convertToJson();
 	}
+	
+	@SuppressWarnings("static-access")
+	private void parseCommandLineOptions(String[] args) {
+		helpOption = OptionBuilder
+				.withDescription("Display help information")
+				.withLongOpt("help")
+				.create("?");
+		hostOption = OptionBuilder
+				.withArgName("host")
+				.hasArgs(1)
+				.isRequired()
+				.withDescription("JMX host")
+				.withLongOpt("host")
+				.create("h");
+		portOption = OptionBuilder
+				.withArgName("port")
+				.hasArgs(1)
+				.isRequired()
+				.withDescription("JMX port")
+				.withLongOpt("port")
+				.create("p");
 
+		options.addOption(helpOption);
+		options.addOption(hostOption);
+		options.addOption(portOption);
+		
+		try {
+			CommandLineParser parser = new BasicParser();
+			cmd = parser.parse(options,args);
+
+			if (cmd.hasOption("?") == true) {
+				usage();
+			}
+		} catch (Exception e) {
+			usage();
+		}
+		
+	}
 	private void listMBeans(String[] args) {
-		handleArguments(args);
+
+		parseCommandLineOptions(args);
+
 		if (this.connect()) {
 			this.getDomains();
 			this.exportMBeans();
+			this.jmxClient.disconnect();
 		}
 	}
 
