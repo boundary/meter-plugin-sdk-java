@@ -16,17 +16,10 @@ package com.boundary.plugin.sdk.jmx;
 
 import java.io.File;
 import java.io.IOException;
-import java.net.MalformedURLException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-
-import com.sun.tools.attach.AgentInitializationException;
-import com.sun.tools.attach.AgentLoadException;
-import com.sun.tools.attach.AttachNotSupportedException;
-import com.sun.tools.attach.VirtualMachineDescriptor;
-import com.sun.tools.attach.VirtualMachine;
 
 import javax.management.MBeanServerConnection;
 import javax.management.ObjectInstance;
@@ -38,6 +31,9 @@ import javax.management.remote.JMXServiceURL;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.sun.tools.attach.VirtualMachine;
+import com.sun.tools.attach.VirtualMachineDescriptor;
+
 /**
  * Encapsulates the interaction with an virtual machine via JMX.
  */
@@ -46,6 +42,7 @@ public class JMXClient {
     private static Logger LOG = LoggerFactory.getLogger(JMXClient.class);
 
 	private MBeanServerConnection mbeanServerConnection;
+	private JMXConnector jmxConnector;
 	private final String LOCAL_CONNECTOR_ADDRESS_PROPERTY = "com.sun.management.jmxremote.localConnectorAddress";
 	private Exception exception;
 
@@ -53,7 +50,8 @@ public class JMXClient {
 	 * Default constructor
 	 */
 	public JMXClient() {
-
+		jmxConnector = null;
+		mbeanServerConnection = null;
 	}
 
 	/**
@@ -85,7 +83,7 @@ public class JMXClient {
 	 */
 	private void getMBeanServerConnection(String url,Map<String, String[]> env) throws IOException {
 		JMXServiceURL serviceUrl = new JMXServiceURL(url);
-		JMXConnector jmxConnector = JMXConnectorFactory.connect(serviceUrl,env);
+		jmxConnector = JMXConnectorFactory.connect(serviceUrl,env);
 		this.mbeanServerConnection = jmxConnector.getMBeanServerConnection();
 	}
 	
@@ -159,6 +157,18 @@ public class JMXClient {
 			e.printStackTrace();
 		}
 		return connected;
+	}
+	
+	public void disconnect() {
+		try {
+			jmxConnector.close();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		finally {
+			jmxConnector = null;
+			mbeanServerConnection = null;
+		}
 	}
 
 	/**
