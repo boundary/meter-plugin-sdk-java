@@ -14,27 +14,19 @@
 
 package com.boundary.plugin.sdk.jmx;
 
-import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Formatter;
 import java.util.Hashtable;
 import java.util.List;
-import java.util.Map.Entry;
 import java.util.Set;
 
-import javax.management.InstanceNotFoundException;
-import javax.management.IntrospectionException;
 import javax.management.MBeanAttributeInfo;
 import javax.management.MBeanInfo;
 import javax.management.MBeanServerConnection;
 import javax.management.ObjectName;
-import javax.management.ReflectionException;
 
-import com.boundary.plugin.sdk.PluginUtil;
 import org.apache.commons.cli.BasicParser;
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.CommandLineParser;
@@ -43,10 +35,11 @@ import org.apache.commons.cli.Option;
 import org.apache.commons.cli.OptionBuilder;
 import org.apache.commons.cli.Options;
 
+import com.boundary.plugin.sdk.MetricDefinitionList;
+import com.boundary.plugin.sdk.PluginUtil;
 import com.fasterxml.jackson.core.JsonGenerationException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.google.common.base.Joiner;
 
 /**
  * Export the MBeans from a running JVM process into a JSON file
@@ -72,13 +65,14 @@ public class ExportMBeans {
 	private MBeanMap map;
 	
 	private static final String COMMAND_NAME="ExportMBeans.command.name";
-	private final String METRIC_NAME_SEPARATOR=".";
+	private final char METRIC_NAME_SEPARATOR='.';
 	private String commandName;
 	
 	private Options options = new Options();
 	private Option helpOption;
 	private Option hostOption;
 	private Option portOption;
+	private Option exportOption;
 	private CommandLine cmd;
 
 	/**
@@ -135,13 +129,13 @@ public class ExportMBeans {
 		Hashtable<String, String> keys = name.getKeyPropertyList();
 		for (String s : keys.values()) {
 			nameBuilder.append(METRIC_NAME_SEPARATOR);
-			nameBuilder.append(s);
+			nameBuilder.append(PluginUtil.toUpperUnderscore(s,METRIC_NAME_SEPARATOR));
 		}
 
-		builder.append(String.format("%s%s_%s",
+		builder.append(String.format("%s%s.%s",
 				name.getDomain().toUpperCase(),
 				nameBuilder.toString().toUpperCase(),
-				info.getName().toUpperCase()));
+				PluginUtil.toUpperUnderscore(info.getName(),METRIC_NAME_SEPARATOR)));
 		return builder.toString();
 	}
 
@@ -163,17 +157,16 @@ public class ExportMBeans {
 			ArrayList<MBeanAttributes> mbeanAttributes = new ArrayList<MBeanAttributes>();
 			for (MBeanAttributeInfo attrInfo : attributes) {
 				if (checkTypes.contains(attrInfo.getType())) {
-				MBeanAttributes attr = new MBeanAttributes();
-				attr.setAttribute(attrInfo.getName());
-				attr.setDataType(attrInfo.getType());
-				attr.setMetricType(MBeanAttributes.MetricType.standard);
-				attr.setMetricName(this.getMetricName(name,attrInfo));
-				mbeanAttributes.add(attr);
+					MBeanAttributes attr = new MBeanAttributes();
+					attr.setAttribute(attrInfo.getName());
+					attr.setDataType(attrInfo.getType());
+					attr.setMetricType(MBeanAttributes.MetricType.standard);
+					attr.setMetricName(this.getMetricName(name,attrInfo));
+					mbeanAttributes.add(attr);
 				}
 			}
 			entry.setAttributes(mbeanAttributes);
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
@@ -190,18 +183,16 @@ public class ExportMBeans {
 				entries.add(entry);
 			}
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 
 	}
 
-	private void convertToJson() {
+	private void convertToJson(Object o) {
 
 		ObjectMapper mapper = new ObjectMapper();
 		try {
-			//mapper.writeValue(new File("metric-map.json"),this.map);
-			mapper.writeValue(System.out,this.map);
+			mapper.writeValue(System.out,o);
 		} catch (JsonGenerationException e) {
 			e.printStackTrace();
 		} catch (JsonMappingException e) {
@@ -220,7 +211,7 @@ public class ExportMBeans {
 			this.map.setMap(beanEntries);
 		}
 
-		this.convertToJson();
+		this.convertToJson(this.map);
 	}
 	
 	@SuppressWarnings("static-access")
@@ -243,10 +234,17 @@ public class ExportMBeans {
 				.withDescription("JMX port")
 				.withLongOpt("port")
 				.create("p");
+		exportOption = OptionBuilder
+				.withArgName("type")
+				.hasArgs(1)
+				.withDescription("Descripts what to export which is either: mbeans, or metrics")
+				.withLongOpt("export")
+				.create("e");
 
 		options.addOption(helpOption);
 		options.addOption(hostOption);
 		options.addOption(portOption);
+		options.addOption(exportOption);
 		
 		try {
 			CommandLineParser parser = new BasicParser();
