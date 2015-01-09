@@ -17,6 +17,7 @@
     
     <!-- Dependency Versions -->
     <commons-cli-version>1.2</commons-cli-version>
+    <commons-lang3-version>3.3.2</commons-lang3-version>
     <cobertura-maven-plugin-version>2.6</cobertura-maven-plugin-version>
     <core-version>1.0-b02</core-version>
     <findbugs-maven-plugin-version>3.0.0</findbugs-maven-plugin-version>
@@ -30,6 +31,11 @@
     <org-hibernate-version>4.3.7.final</org-hibernate-version>
   </properties>
   <dependencies>
+     <dependency>
+       <groupId>org.apache.commons</groupId>
+       <artifactId>commons-lang3</artifactId>
+       <version>${commons-lang3-version}</version>
+    </dependency>
     <dependency>
       <groupId>com.betfair.net.java.opendmk</groupId>
       <artifactId>core</artifactId>
