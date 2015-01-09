@@ -40,5 +40,10 @@ public class MBeanEntry {
 	public void setEnabled(boolean enabled) {
 		this.enabled = enabled;
 	}
+	@Override
+	public String toString() {
+		return "MBeanEntry [objectName=" + objectName + ", attributes="
+				+ attributes + ", enabled=" + enabled + "]";
+	}
 
 }

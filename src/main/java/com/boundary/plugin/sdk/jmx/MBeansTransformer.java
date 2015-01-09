@@ -41,6 +41,7 @@ public class MBeansTransformer {
 			for (MBeanAttributeInfo attrInfo : attributes) {
 				if (checkTypes.contains(attrInfo.getType())) {
 					transform.beginAttribute(name,attrInfo);
+					transform.endAttribute();
 				}
 			}
 		} catch (Exception e) {

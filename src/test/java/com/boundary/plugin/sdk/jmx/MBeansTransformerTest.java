@@ -58,7 +58,7 @@ public class MBeansTransformerTest {
 	}
 
 	@Test
-	public void testMBeansTransformer() {
+	public void testMetricDefinitionConstructor() {
 		MetricDefinitionTransform transform = new MetricDefinitionTransform();
 		JMXClient client = new JMXClient();
 		client.connect("localhost", 9991);
@@ -75,7 +75,7 @@ public class MBeansTransformerTest {
 	}
 
 	@Test
-	public void testTransform() {
+	public void testMetricDefinitionTransform() {
 		transformer.transform();
 		MetricDefinitionList list = transform.getMetricList();
 
@@ -89,6 +89,34 @@ public class MBeansTransformerTest {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
+
+	}
+	
+	@Test
+	public void testMBeansTransformer() {
+		MBeanMapTransform transform = new MBeanMapTransform();
+		JMXClient client = new JMXClient();
+		client.connect("localhost", 9991);
+		MBeansTransformer transformer = new MBeansTransformer(client,transform,"FOO");
+		transformer.transform();
+		
+		MBeanMap map = transform.getMap();
+		
+		for (MBeanEntry entry : map.getMap()) {
+			System.out.println(entry);
+		}
+		
+		ObjectMapper mapper = new ObjectMapper();
+		try {
+			mapper.writeValue(System.out,map);
+		} catch (JsonGenerationException e) {
+			e.printStackTrace();
+		} catch (JsonMappingException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+
 
 	}
 
