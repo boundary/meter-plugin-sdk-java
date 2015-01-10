@@ -24,7 +24,7 @@ import com.boundary.plugin.sdk.MetricDefinitionBuilder;
 import com.boundary.plugin.sdk.MetricDefinitionList;
 import com.boundary.plugin.sdk.MetricUnit;
 
-public class MetricDefinitionTransform extends MBeanTransformBase {
+public class MetricDefinitionTransform extends MBeanTransformBase<MetricDefinitionList> {
 	
 
 	private MetricDefinitionList metricList;
@@ -70,8 +70,10 @@ public class MetricDefinitionTransform extends MBeanTransformBase {
 		builder.setDefaultResolutionMS(DEFAULT_RESOLUTION);
 		builder.setDescription(camelCaseToSpaceSeparated(info.getDescription()));
 		StringBuilder n = new StringBuilder();
-		n.append(prefix);
-		n.append(' ');
+		if (prefix != null) {
+			n.append(prefix);
+			n.append(' ');
+		}
 		n.append(camelCaseToSpaceSeparated(info.getName()));
 		String displayName = n.toString();
 		builder.setDisplayName(displayName);
@@ -92,4 +94,9 @@ public class MetricDefinitionTransform extends MBeanTransformBase {
 		
 	}
 
+	@Override
+	public MetricDefinitionList getExport() {
+		// TODO Auto-generated method stub
+		return metricList;
+	}
 }

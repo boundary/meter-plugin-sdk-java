@@ -14,21 +14,14 @@
 
 package com.boundary.plugin.sdk.jmx;
 
-import static com.boundary.plugin.sdk.PluginUtil.camelCaseToSpaceSeparated;
 
 import java.util.ArrayList;
 
 import javax.management.MBeanAttributeInfo;
 import javax.management.ObjectName;
 
-import com.boundary.plugin.sdk.MetricAggregate;
-import com.boundary.plugin.sdk.MetricDefinitionBuilder;
-import com.boundary.plugin.sdk.MetricDefinitionList;
-import com.boundary.plugin.sdk.MetricUnit;
-
-public class MBeanMapTransform extends MBeanTransformBase {
+public class MBeanMapTransform extends MBeanTransformBase<MBeanMap> {
 	
-
 	private MBeanMap map;
 	private ArrayList<MBeanEntry> entries;
 	private MBeanEntry entry;
@@ -79,9 +72,10 @@ public class MBeanMapTransform extends MBeanTransformBase {
 	public void endAttribute() {
 		
 	}
-	
-	public MBeanMap getMap() {
+
+	@Override
+	public MBeanMap getExport() {
 		this.map.setMap(entries);
-		return this.map;
+		return map;
 	}
 }

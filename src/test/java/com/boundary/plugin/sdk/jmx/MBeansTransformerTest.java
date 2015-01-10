@@ -94,13 +94,13 @@ public class MBeansTransformerTest {
 	
 	@Test
 	public void testMBeansTransformer() {
-		MBeanMapTransform transform = new MBeanMapTransform();
+		MBeanTransform<MBeanMap> transform = new MBeanMapTransform();
 		JMXClient client = new JMXClient();
 		client.connect("localhost", 9991);
-		MBeansTransformer transformer = new MBeansTransformer(client,transform,"FOO");
+		MBeansTransformer<MBeanMap> transformer = new MBeansTransformer<MBeanMap>(client,transform,"FOO");
 		transformer.transform();
 		
-		MBeanMap map = transform.getMap();
+		MBeanMap map = transformer.export();
 		
 		for (MBeanEntry entry : map.getMap()) {
 			System.out.println(entry);

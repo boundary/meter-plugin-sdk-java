@@ -3,7 +3,7 @@ package com.boundary.plugin.sdk.jmx;
 import javax.management.MBeanAttributeInfo;
 import javax.management.ObjectName;
 
-public interface MBeanTransform {
+public interface MBeanTransform <E> {
 	
 	public void beginDomain(String domain);
 	public void endDomain();
@@ -14,5 +14,7 @@ public interface MBeanTransform {
 	public void beginAttribute(ObjectName name,MBeanAttributeInfo attribInfo);
 	public void endAttribute();
 	public void setPrefix(String prefix);
+	
+	public E getExport();
 
 }

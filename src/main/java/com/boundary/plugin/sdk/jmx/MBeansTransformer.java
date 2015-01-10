@@ -12,12 +12,16 @@ import javax.management.MBeanInfo;
 import javax.management.MBeanServerConnection;
 import javax.management.ObjectName;
 
-public class MBeansTransformer {
+import com.fasterxml.jackson.core.JsonGenerationException;
+import com.fasterxml.jackson.databind.JsonMappingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
+public class MBeansTransformer<E> {
 	
 	private JMXClient client;
-	private MBeanTransform transform;
+	private MBeanTransform<E> transform;
 
-	MBeansTransformer(JMXClient client,MBeanTransform transform,String prefix) {
+	MBeansTransformer(JMXClient client,MBeanTransform<E> transform,String prefix) {
 		this.client = client;
 		this.transform = transform;
 		transform.setPrefix(prefix);
@@ -71,5 +75,24 @@ public class MBeansTransformer {
 	 */
 	public void transform() {
 		traverseMBeans();
+	}
+	
+	public void convertToJson() {
+
+		ObjectMapper mapper = new ObjectMapper();
+		try {
+			mapper.writeValue(System.out,this.export());
+		} catch (JsonGenerationException e) {
+			e.printStackTrace();
+		} catch (JsonMappingException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+	
+	public E export() {
+		E export = transform.getExport();
+		return export;
 	}
 }

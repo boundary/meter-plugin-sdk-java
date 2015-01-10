@@ -1,5 +1,3 @@
-package com.boundary.plugin.sdk.jmx;
-
 //Copyright 2014 Boundary, Inc.
 //
 //Licensed under the Apache License, Version 2.0 (the "License");
@@ -13,42 +11,20 @@ package com.boundary.plugin.sdk.jmx;
 //WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 //See the License for the specific language governing permissions and
 //limitations under the License.
-import java.io.ByteArrayOutputStream;
-import java.io.PrintStream;
+package com.boundary.plugin.sdk.jmx;
+
 import java.util.Hashtable;
 
 import javax.management.MBeanAttributeInfo;
 import javax.management.ObjectName;
 
-import org.junit.After;
-import org.junit.AfterClass;
-import org.junit.Before;
-import org.junit.BeforeClass;
-
 import com.boundary.plugin.sdk.PluginUtil;
 
-public abstract class MBeanTransformBase implements MBeanTransform {
+public abstract class MBeanTransformBase<E> implements MBeanTransform {
 	
 	private final char METRIC_NAME_SEPARATOR='.';
 	protected String prefix;
-	
-	@BeforeClass
-	public static void setUpBeforeClass() throws Exception {
-	}
-
-	@AfterClass
-	public static void tearDownAfterClass() throws Exception {
-	}
-
-	@Before
-	public void setUp() throws Exception {
-		
-	}
-
-	@After
-	public void tearDown() throws Exception {
-
-	}
+	private E export;
 
 	protected String getMetricName(ObjectName name,MBeanAttributeInfo info) {
 		StringBuilder builder = new StringBuilder();
@@ -68,5 +44,9 @@ public abstract class MBeanTransformBase implements MBeanTransform {
 	
 	public void setPrefix(String prefix) {
 		this.prefix = prefix;
+	}
+	
+	public E getExport() {
+		return export;
 	}
 }
