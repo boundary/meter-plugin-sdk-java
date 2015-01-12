@@ -66,7 +66,7 @@ public class MBeansTransformerTest {
 		transformer.transform();
 		
 		MetricDefinitionList list = transform.getMetricList();
-		ArrayList<MetricDefinition> a = list.getResults();
+		ArrayList<MetricDefinition> a = list.getResult();
 		
 		for (MetricDefinition def : a) {
 			System.out.println(def);
