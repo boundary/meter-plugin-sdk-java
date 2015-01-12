@@ -22,6 +22,7 @@ public class MBeanAttributes {
 	private String dataType;
 	private String metricName;
 	private MetricType metricType;
+	private Number scale = 1;
 	private boolean enabled = true;
 	
 	public String getAttribute() {
@@ -54,5 +55,10 @@ public class MBeanAttributes {
 	public void setEnabled(boolean enabled) {
 		this.enabled = enabled;
 	}
-
+	public Number getScale() {
+		return scale;
+	}
+	public void setScale(Number scale) {
+		this.scale = scale;
+	}
 }
