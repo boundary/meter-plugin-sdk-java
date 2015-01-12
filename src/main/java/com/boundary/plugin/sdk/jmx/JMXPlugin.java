@@ -36,7 +36,7 @@ public class JMXPlugin implements Plugin<JMXPluginConfiguration> {
 	private MeasurementSink output;
 	private MBeanMap mbeanMap;
 	private final String MBEAN_MAP_PATH="plugin-config/mbeans.json";
-	private final String PLUGIN_PARAM_PATH="plugin.json";
+	private final String PLUGIN_PARAM_PATH="param.json";
 	
 	@Override
 	public void setMeasureOutput(MeasurementSink output) {
