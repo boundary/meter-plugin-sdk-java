@@ -59,7 +59,7 @@ public class ExportMBeans {
 
 	private CommandLine cmd;
 	
-	private enum ExportType {MBEANS,METRICS};
+	private enum ExportType {MBEANS,METRICS,PLUGINS};
 	private ExportType exportType;
 
 	/**
@@ -116,6 +116,13 @@ public class ExportMBeans {
 		transformer.convertToJson();
 	}
 	
+	private void exportPLUGINS() {
+		MBeanTransform<PluginMetricTransform> transform = new PluginMetricTransform();
+		MBeansTransformer<PluginMetricTransform> transformer = new MBeansTransformer<PluginMetricTransform>(jmxClient,transform,this.prefix);
+		transformer.transform();
+		transformer.convertToJson();
+	}
+	
 	@SuppressWarnings("static-access")
 	private void parseCommandLineOptions(String[] args) {
 		helpOption = OptionBuilder
@@ -139,7 +146,7 @@ public class ExportMBeans {
 		exportOption = OptionBuilder
 				.withArgName("type")
 				.hasArgs(1)
-				.withDescription("Selects what to export which is either: mbeans, or metrics." +
+				.withDescription("Selects what to export which is either: mbeans, metrics, or plugins." +
 				                 " defaults to mbeans")
 				.withLongOpt("export")
 				.create("e");
@@ -190,6 +197,9 @@ public class ExportMBeans {
 				case "metrics":
 					exportType = ExportType.METRICS;
 					break;
+				case "plugins":
+					exportType = ExportType.PLUGINS;
+					break;
 				default:
 					usage();
 				}
@@ -211,6 +221,9 @@ public class ExportMBeans {
 				break;
 			case METRICS:
 				exportMETRICS();
+				break;
+			case PLUGINS:
+				exportPLUGINS();
 				break;
 			default:
 				assert false: "Undefined export type";
