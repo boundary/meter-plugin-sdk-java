@@ -20,6 +20,9 @@ import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/**
+ * Various utility functions that can be leveraged by plugins
+ */
 public class PluginUtil {
 
 	private static Logger LOG = LoggerFactory.getLogger(PluginUtil.class);
@@ -75,19 +78,12 @@ public class PluginUtil {
 		return builder.toString().replaceAll(r.toString(),d.toString());
 	}
 	
+	/**
+	 * Transforms a camel case string into a string with words separated by a space
+	 * @param s {@link String} camel case string to transform
+	 * @return {@link String} transformed to words and spaces
+	 */
 	public static String camelCaseToSpaceSeparated(String s) {
-		return StringUtils.join(StringUtils.splitByCharacterTypeCamelCase(s),' ');
+		return StringUtils.join(StringUtils.splitByCharacterTypeCamelCase(s),' ').replaceAll("\\s+"," ");
 	}
-	
-	public static String splitCamelCase(String s) {
-		   return s.replaceAll(
-		      String.format("%s|%s|%s",
-		         "(?<=[A-Z])(?=[A-Z][a-z])",
-		         "(?<=[^A-Z])(?=[A-Z])",
-		         "(?<=[A-Za-z])(?=[^A-Za-z])"
-		      ),
-		      " "
-		   );
-		}
-
 }
