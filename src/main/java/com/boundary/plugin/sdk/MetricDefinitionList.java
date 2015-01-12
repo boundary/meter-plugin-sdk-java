@@ -24,7 +24,7 @@ public class MetricDefinitionList {
 		result = new ArrayList<MetricDefinition>();
 	}
 
-	public ArrayList<MetricDefinition> getResults() {
+	public ArrayList<MetricDefinition> getResult() {
 		return result;
 	}
 }

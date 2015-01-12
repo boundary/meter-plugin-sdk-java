@@ -78,10 +78,10 @@ public class MetricDefinitionTransform extends MBeanTransformBase<MetricDefiniti
 		String displayName = n.toString();
 		builder.setDisplayName(displayName);
 		builder.setDisplayNameShort(displayName.length() <= 20 ? displayName : DEFAULT_DISPLAY_NAME_SHORT);
-		builder.setMetric(this.getMetricName(name, info));
+		builder.setName(this.getMetricName(name, info));
 		builder.setUnit(DEFAULT_UNIT);
 		
-		metricList.getResults().add(builder.build());                                
+		metricList.getResult().add(builder.build());                                
 	}
 	
 	public MetricDefinitionList getMetricList() {

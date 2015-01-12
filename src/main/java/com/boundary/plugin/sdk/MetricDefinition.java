@@ -20,7 +20,7 @@ package com.boundary.plugin.sdk;
  */
 public class MetricDefinition {
 	
-	protected String metric;
+	protected String name;
 	protected String displayName;
 	protected String displayNameShort;
 	protected String description;
@@ -33,8 +33,8 @@ public class MetricDefinition {
 	 * Name of the metric, must be globally unique if creating
 	 * @return {@link String} metric identifier
 	 */
-	public String getMetric() {
-		return metric;
+	public String getName() {
+		return name;
 	}
 	
 	/**
@@ -124,7 +124,7 @@ public class MetricDefinition {
 
 	@Override
 	public String toString() {
-		return "MetricDefinition [metric=" + metric + ", displayName="
+		return "MetricDefinition [name=" + name + ", displayName="
 				+ displayName + ", displayNameShort=" + displayNameShort
 				+ ", description=" + description + ", defaultResolutionMS="
 				+ defaultResolutionMS + ", defaultAggregate="

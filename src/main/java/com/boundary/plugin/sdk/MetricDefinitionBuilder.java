@@ -2,7 +2,7 @@ package com.boundary.plugin.sdk;
 
 public class MetricDefinitionBuilder {
 
-	private String metric;
+	private String name;
 	private String displayName;
 	private String displayNameShort;
 	private String description;
@@ -12,7 +12,7 @@ public class MetricDefinitionBuilder {
 	private boolean isDisabled;
 	
 	public MetricDefinitionBuilder() {
-		this.metric = "";
+		this.name = "";
 		this.displayName = "";
 		this.description = "";
 		this.defaultResolutionMS = 1000L;
@@ -20,8 +20,8 @@ public class MetricDefinitionBuilder {
 		this.unit = MetricUnit.number;
 	}
 	
-	public MetricDefinitionBuilder setMetric(String metric) {
-		this.metric = metric;
+	public MetricDefinitionBuilder setName(String name) {
+		this.name = name;
 		return this;
 	}
 	public MetricDefinitionBuilder setDisplayName(String displayName) {
@@ -57,7 +57,7 @@ public class MetricDefinitionBuilder {
 		m.displayName = this.displayName;
 		m.displayNameShort = this.displayNameShort;
 		m.isDisabled = this.isDisabled;
-		m.metric = this.metric;
+		m.name = this.name;
 		m.unit = this.unit;
 
 		return m;
