@@ -14,19 +14,22 @@
 
 package com.boundary.plugin.sdk.jmx;
 
+/**
+ * JMX Plugin configuration item. Contains end user configuration information to
+ * locate, connect, and authenticate to a JMX Plugin and its derived classes.
+ *
+ */
 public class JMXPluginConfigurationItem {
 	
 	private String name;
-	private String connectionMethod;
-	private String attachExpression;
 	private String host;
 	private int port;
+	private String user;
 	private String password;
 	private String pollInterval;
 	private String source;
 	
 	public JMXPluginConfigurationItem() {
-		// TODO Auto-generated constructor stub
 	}
 
 	public String getName() {
@@ -35,22 +38,6 @@ public class JMXPluginConfigurationItem {
 
 	public void setName(String name) {
 		this.name = name;
-	}
-
-	public String getConnectionMethod() {
-		return connectionMethod;
-	}
-
-	public void setConnectionMethod(String connectionMethod) {
-		this.connectionMethod = connectionMethod;
-	}
-
-	public String getAttachExpression() {
-		return attachExpression;
-	}
-
-	public void setAttachExpression(String attachExpression) {
-		this.attachExpression = attachExpression;
 	}
 
 	public String getHost() {
@@ -67,6 +54,13 @@ public class JMXPluginConfigurationItem {
 
 	public void setPort(int port) {
 		this.port = port;
+	}
+	
+	public String getUser() {
+		return this.user;
+	}
+	public void setUser(String user) {
+		this.user = user;
 	}
 
 	public String getPassword() {

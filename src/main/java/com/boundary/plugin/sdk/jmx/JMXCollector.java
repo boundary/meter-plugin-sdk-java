@@ -38,6 +38,7 @@ import org.slf4j.LoggerFactory;
 
 import com.boundary.plugin.sdk.Collector;
 import com.boundary.plugin.sdk.Measurement;
+import com.boundary.plugin.sdk.MeasurementBuilder;
 import com.boundary.plugin.sdk.MeasurementSink;
 import com.boundary.plugin.sdk.PluginUtil;
 
@@ -66,16 +67,19 @@ public class JMXCollector implements Collector {
 	private MBeanMap mbeanMap;
 	private MeasurementSink output;
 	private String name;
+	private AttributeValueExtractor valueExtractor;
 
 	public JMXCollector(String name,
 			JMXPluginConfigurationItem item,
 			MBeanMap mbeanMap,
+			AttributeValueExtractor valueExtractor,
 			MeasurementSink output) {
 		this.name = name;
 		this.client = new JMXClient();
 		this.item = item;
 		this.mbeanMap = mbeanMap;
 		this.output = output;
+		this.valueExtractor = valueExtractor;
 	}
 
 	@Override
@@ -105,19 +109,36 @@ public class JMXCollector implements Collector {
 			source = item.getSource();
 		}
 
-		while(true) {
+		while (true) {
 			try {
 				long start = new Date().getTime();
 				for (MBeanEntry entry : mbeanMap.getMap()) {
-					ObjectName name = new ObjectName(entry.getObjectName());
-					ObjectInstance instance = connection.getObjectInstance(name);
-					for (MBeanAttributes attr : entry.getAttributes()) {
-						Object obj = connection.getAttribute(instance.getObjectName(),attr.getAttribute());
-						Number v = (Number)obj.getClass().cast(obj);
-						Measurement m = new Measurement(attr.getMetricName(),v);
-						output.send(m);
+					if (entry.isEnabled()) {
+						ObjectName name = new ObjectName(entry.getMbean());
+						ObjectInstance instance = connection
+								.getObjectInstance(name);
+						for (MBeanAttribute attr : entry.getAttributes()) {
+							if (attr.isEnabled()) {
+								LOG.debug("object: {},attribute: {}, type: {}",
+										instance.getObjectName(),attr.getAttribute(),attr.getDataType());
+								Object obj = connection.getAttribute(
+										instance.getObjectName(),
+										attr.getAttribute());
+								LOG.debug("metric: {}, object class: {}, value: {}",attr.getMetricName(),obj.getClass(),obj);
+								Number value = valueExtractor.getValue(obj,attr);
+								MeasurementBuilder builder = new MeasurementBuilder();
+								builder.setName(attr.getMetricName())
+								       .setSource(source)
+								       .setValue(value)
+								       .setTimestamp(new Date());
+								Measurement m = builder.build();
+								output.send(m);
+							}
+						}
 					}
 				}
+				// TBD: How to handle if the sample time is longer than the amount of time it
+				// takes to collect the metrics.
 				long stop = new Date().getTime();
 				long delta = stop - start;
 				delta = delta < 0 ? 0 : delta;

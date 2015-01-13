@@ -35,13 +35,15 @@ public class JMXPlugin implements Plugin<JMXPluginConfiguration> {
 	private CollectorDispatcher dispatcher;
 	private MeasurementSink output;
 	private MBeanMap mbeanMap;
-	private final String MBEAN_MAP_PATH="plugin-config/mbeans.json";
+	private AttributeValueExtractor valueExtractor;
+	private final String MBEAN_MAP_PATH="config/mbeans.json";
 	private final String PLUGIN_PARAM_PATH="param.json";
 	
 	@Override
 	public void setMeasureOutput(MeasurementSink output) {
 		LOG.info("setting measureoutput");
 		this.output = output;
+		this.valueExtractor = new AttributeValueExtractor();
 	}
 
 	@Override
@@ -76,6 +78,19 @@ public class JMXPlugin implements Plugin<JMXPluginConfiguration> {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+		
+		try {
+			mbeanMap = mapper.readValue(new File(MBEAN_MAP_PATH), MBeanMap.class);
+		} catch (JsonParseException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (JsonMappingException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 
 	@Override
@@ -87,7 +102,7 @@ public class JMXPlugin implements Plugin<JMXPluginConfiguration> {
 	public void run() {
 		ArrayList<JMXPluginConfigurationItem> items = configuration.getItems();
 		for(JMXPluginConfigurationItem i : items) {
-			dispatcher.addCollector(new JMXCollector(i.getName(),i,mbeanMap,output));
+			dispatcher.addCollector(new JMXCollector(i.getName(),i,mbeanMap,valueExtractor,output));
 		}
 		dispatcher.run();
 	}
