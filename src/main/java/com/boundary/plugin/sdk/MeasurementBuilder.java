@@ -16,6 +16,11 @@ package com.boundary.plugin.sdk;
 
 import java.util.Date;
 
+/**
+ * Because {@link Measurement} contains no mutators we provide this class to allow creation
+ * of {@link Measurement} with this help class
+ * 
+ */
 public class MeasurementBuilder {
 	
     private String name;
