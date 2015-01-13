@@ -21,9 +21,9 @@ public class MBeanAttribute {
 	private String attribute;
 	private String dataType;
 	private String metricName;
+	private String key;
 	private MetricType metricType;
 	private Number scale = 1;
-	private String key;
 	private boolean enabled = true;
 	
 	public MBeanAttribute() {
