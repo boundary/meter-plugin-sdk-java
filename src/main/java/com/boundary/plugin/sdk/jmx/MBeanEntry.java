@@ -15,23 +15,24 @@
 package com.boundary.plugin.sdk.jmx;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class MBeanEntry {
 	
-	private String objectName;
-	private ArrayList<MBeanAttributes> attributes;
+	private String mbean;
+	private List<MBeanAttribute> attributes;
 	private boolean enabled = true;
 	
-	public String getObjectName() {
-		return objectName;
+	public String getMbean() {
+		return mbean;
 	}
-	public void setObjectName(String objectName) {
-		this.objectName = objectName;
+	public void setMbean(String mbean) {
+		this.mbean = mbean;
 	}
-	public ArrayList<MBeanAttributes> getAttributes() {
+	public List<MBeanAttribute> getAttributes() {
 		return attributes;
 	}
-	public void setAttributes(ArrayList<MBeanAttributes> attributes) {
+	public void setAttributes(List<MBeanAttribute> attributes) {
 		this.attributes = attributes;
 	}
 	public boolean isEnabled() {
@@ -42,7 +43,7 @@ public class MBeanEntry {
 	}
 	@Override
 	public String toString() {
-		return "MBeanEntry [objectName=" + objectName + ", attributes="
+		return "MBeanEntry [mbean=" + mbean + ", attributes="
 				+ attributes + ", enabled=" + enabled + "]";
 	}
 

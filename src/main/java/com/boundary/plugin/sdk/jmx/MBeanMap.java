@@ -14,14 +14,11 @@
 
 package com.boundary.plugin.sdk.jmx;
 
-import java.io.File;
-import java.io.IOException;
 import java.util.ArrayList;
 
-import com.fasterxml.jackson.core.JsonParseException;
-import com.fasterxml.jackson.databind.JsonMappingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
-
+/**
+ * Contains the MBean information used by the JMX plugin to collect metrics.
+ */
 public class MBeanMap {
 	
 	ArrayList<MBeanEntry> map;
@@ -35,23 +32,5 @@ public class MBeanMap {
 
 	public void setMap(ArrayList<MBeanEntry> map) {
 		this.map = map;
-	}
-	
-	public static MBeanMap getMBeanMap() {
-		ObjectMapper mapper = new ObjectMapper();
-		MBeanMap map = null;
-		try {
-			map = mapper.readValue(new File("plugin-config/metric-map.json"), MBeanMap.class);
-		} catch (JsonParseException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (JsonMappingException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		return map;
 	}
 }

@@ -25,7 +25,7 @@ public class MBeanMapTransform extends MBeanTransformBase<MBeanMap> {
 	private MBeanMap map;
 	private ArrayList<MBeanEntry> entries;
 	private MBeanEntry entry;
-	private ArrayList<MBeanAttributes> mbeanAttributes;
+	private ArrayList<MBeanAttribute> mbeanAttributes;
 	
 	public MBeanMapTransform() {
 		this.map = new MBeanMap();
@@ -48,9 +48,9 @@ public class MBeanMapTransform extends MBeanTransformBase<MBeanMap> {
 	@Override
 	public void beginMBean(ObjectName name) {
 		this.entry = new MBeanEntry();
-		this.entry.setObjectName(name.getCanonicalName());
+		this.entry.setMbean(name.getCanonicalName());
 		entries.add(entry);
-		mbeanAttributes = new ArrayList<MBeanAttributes>();
+		mbeanAttributes = new ArrayList<MBeanAttribute>();
 
 	}
 
@@ -61,10 +61,10 @@ public class MBeanMapTransform extends MBeanTransformBase<MBeanMap> {
 
 	@Override
 	public void beginAttribute(ObjectName name,MBeanAttributeInfo info) {
-		MBeanAttributes attr = new MBeanAttributes();
+		MBeanAttribute attr = new MBeanAttribute();
 		attr.setAttribute(info.getName());
 		attr.setDataType(info.getType());
-		attr.setMetricType(MBeanAttributes.MetricType.standard);
+		attr.setMetricType(MBeanAttribute.MetricType.standard);
 		attr.setMetricName(this.getMetricName(name,info));
 		mbeanAttributes.add(attr);
 	}

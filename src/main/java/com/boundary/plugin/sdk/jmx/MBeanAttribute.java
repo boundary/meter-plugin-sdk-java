@@ -14,7 +14,7 @@
 
 package com.boundary.plugin.sdk.jmx;
 
-public class MBeanAttributes {
+public class MBeanAttribute {
 	
 	public enum MetricType {standard};
 	
@@ -23,7 +23,12 @@ public class MBeanAttributes {
 	private String metricName;
 	private MetricType metricType;
 	private Number scale = 1;
+	private String key;
 	private boolean enabled = true;
+	
+	public MBeanAttribute() {
+		
+	}
 	
 	public String getAttribute() {
 		return attribute;
@@ -60,5 +65,8 @@ public class MBeanAttributes {
 	}
 	public void setScale(Number scale) {
 		this.scale = scale;
+	}
+	public String getKey() {
+		return this.key;
 	}
 }
