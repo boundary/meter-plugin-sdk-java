@@ -31,6 +31,14 @@ public class PluginRunner {
 	}
 	
 	/**
+	 * Outputs usage to standard error
+	 */
+	private static void Usage() {
+		System.err.printf("{} <class name>\n",PluginRunner.class.getTypeName());
+		System.exit(1);
+	}
+	
+	/**
 	 * Loads the plugin class and calls its run() method.
 	 */
 	public void run() {
@@ -52,6 +60,7 @@ public class PluginRunner {
 	 */
 	public static void main(String[] args) {
 		if (args.length != 1) {
+			Usage();
 			System.exit(1);
 		}
 		PluginRunner plugin = new PluginRunner(args[0]);
