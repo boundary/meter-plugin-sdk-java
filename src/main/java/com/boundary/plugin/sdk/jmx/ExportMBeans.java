@@ -117,8 +117,8 @@ public class ExportMBeans {
 	}
 	
 	private void exportPLUGINS() {
-		MBeanTransform<PluginMetricTransform> transform = new PluginMetricTransform();
-		MBeansTransformer<PluginMetricTransform> transformer = new MBeansTransformer<PluginMetricTransform>(jmxClient,transform,this.prefix);
+		MBeanTransform<PluginMetrics> transform = new PluginMetricTransform();
+		MBeansTransformer<PluginMetrics> transformer = new MBeansTransformer<PluginMetrics>(jmxClient,transform,this.prefix);
 		transformer.transform();
 		transformer.convertToJson();
 	}

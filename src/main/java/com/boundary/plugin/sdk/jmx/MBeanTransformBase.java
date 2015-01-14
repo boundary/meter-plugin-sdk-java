@@ -20,16 +20,39 @@ import javax.management.ObjectName;
 
 import com.boundary.plugin.sdk.PluginUtil;
 
-public abstract class MBeanTransformBase<E> implements MBeanTransform {
+public abstract class MBeanTransformBase<E> implements MBeanTransform<E> {
 	
-	private final char METRIC_NAME_SEPARATOR='.';
+	protected final char METRIC_NAME_SEPARATOR='.';
 	protected String prefix;
 	private E export;
 
+	/**
+	 * Generates a metrics name from the MBean name and MBean attribute name
+	 * @param name {@link ObjectName}
+	 * @param info {@link MBeanAttributeInfo}
+	 * @return {@link String}
+	 */
 	protected String getMetricName(ObjectName name,MBeanAttributeInfo info) {
 		StringBuilder builder = new StringBuilder();
 		StringBuilder nameBuilder = new StringBuilder();
-		Hashtable<String, String> keys = name.getKeyPropertyList();
+		Hashtable<String,String> keys = new Hashtable<String, String>(name.getKeyPropertyList());
+		
+		// Prefix with type and then name and remove from
+		// the hash table if they exist, so that names go
+		// from the general to specific
+		String attrType= keys.get("type");
+		String attrName = keys.get("name");
+		if (attrType != null) {
+			nameBuilder.append(METRIC_NAME_SEPARATOR);
+			nameBuilder.append(attrType);
+			keys.remove("type");
+		}
+		if (attrName != null) {
+			nameBuilder.append(METRIC_NAME_SEPARATOR);
+			nameBuilder.append(attrName);
+			keys.remove("name");
+		}
+
 		for (String s : keys.values()) {
 			nameBuilder.append(METRIC_NAME_SEPARATOR);
 			nameBuilder.append(PluginUtil.toUpperUnderscore(s,METRIC_NAME_SEPARATOR));

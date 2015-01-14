@@ -14,15 +14,8 @@
 
 package com.boundary.plugin.sdk.jmx;
 
-import static com.boundary.plugin.sdk.PluginUtil.camelCaseToSpaceSeparated;
-
 import javax.management.MBeanAttributeInfo;
 import javax.management.ObjectName;
-
-import com.boundary.plugin.sdk.MetricAggregate;
-import com.boundary.plugin.sdk.MetricDefinitionBuilder;
-import com.boundary.plugin.sdk.MetricDefinitionList;
-import com.boundary.plugin.sdk.MetricUnit;
 
 public class PluginMetricTransform extends MBeanTransformBase<PluginMetrics> {
 	

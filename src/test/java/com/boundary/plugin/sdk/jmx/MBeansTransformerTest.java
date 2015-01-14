@@ -42,14 +42,14 @@ public class MBeansTransformerTest {
 
 	private MetricDefinitionTransform transform;
 	private JMXClient client;
-	private MBeansTransformer transformer;
+	private MBeansTransformer<MetricDefinitionList> transformer;
 
 	@Before
 	public void setUp() throws Exception {
 		transform = new MetricDefinitionTransform();
 		client = new JMXClient();
 		client.connect("localhost", 9991);
-		transformer = new MBeansTransformer(client,transform,"FOO");
+		transformer = new MBeansTransformer<MetricDefinitionList>(client,transform,"FOO");
 	}
 
 	@After
@@ -62,7 +62,7 @@ public class MBeansTransformerTest {
 		MetricDefinitionTransform transform = new MetricDefinitionTransform();
 		JMXClient client = new JMXClient();
 		client.connect("localhost", 9991);
-		MBeansTransformer transformer = new MBeansTransformer(client,transform,"FOO");
+		MBeansTransformer<MetricDefinitionList> transformer = new MBeansTransformer<MetricDefinitionList>(client,transform,"FOO");
 		transformer.transform();
 		
 		MetricDefinitionList list = transform.getMetricList();
@@ -116,8 +116,5 @@ public class MBeansTransformerTest {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-
-
 	}
-
 }

@@ -16,6 +16,8 @@ package com.boundary.plugin.sdk.jmx;
 
 import static com.boundary.plugin.sdk.PluginUtil.camelCaseToSpaceSeparated;
 
+import java.util.Hashtable;
+
 import javax.management.MBeanAttributeInfo;
 import javax.management.ObjectName;
 
@@ -26,7 +28,6 @@ import com.boundary.plugin.sdk.MetricUnit;
 
 public class MetricDefinitionTransform extends MBeanTransformBase<MetricDefinitionList> {
 	
-
 	private MetricDefinitionList metricList;
 	private final static MetricAggregate DEFAULT_AGGREGATE=MetricAggregate.avg;
 	private final static long DEFAULT_RESOLUTION = 1000L;
@@ -65,38 +66,45 @@ public class MetricDefinitionTransform extends MBeanTransformBase<MetricDefiniti
 	@Override
 	public void beginAttribute(ObjectName name, MBeanAttributeInfo info) {
 		MetricDefinitionBuilder builder = new MetricDefinitionBuilder();
+		Hashtable<String,String> keys = new Hashtable<String, String>(name.getKeyPropertyList());
 		
 		builder.setDefaultAggregate(DEFAULT_AGGREGATE);
 		builder.setDefaultResolutionMS(DEFAULT_RESOLUTION);
 		builder.setDescription(camelCaseToSpaceSeparated(info.getDescription()));
-		StringBuilder n = new StringBuilder();
-		if (prefix != null) {
-			n.append(prefix);
-			n.append(' ');
+		
+		StringBuilder nameBuilder = new StringBuilder();
+		if (this.prefix != null) {
+			nameBuilder.append(this.prefix);
+			nameBuilder.append(' ');
 		}
-		n.append(camelCaseToSpaceSeparated(info.getName()));
-		String displayName = n.toString();
-		builder.setDisplayName(displayName);
+		// Prefix with type and then name and remove from
+		// the hash table if they exist, so that names go
+		// from the general to specific
+		String attrType = keys.get("type");
+		String attrName = keys.get("name");
+		if (attrType != null) {
+			nameBuilder.append(attrType);
+		}
+		if (attrName != null) {
+			nameBuilder.append(attrName);
+		}
+		nameBuilder.append(info.getName());
+		String displayName = nameBuilder.toString();
+		builder.setDisplayName(camelCaseToSpaceSeparated(displayName));
 		builder.setDisplayNameShort(displayName.length() <= 20 ? displayName : DEFAULT_DISPLAY_NAME_SHORT);
-		builder.setName(this.getMetricName(name, info));
+		builder.setName(this.getMetricName(name,info));
 		builder.setUnit(DEFAULT_UNIT);
 		
 		metricList.getResult().add(builder.build());                                
 	}
-	
-	public MetricDefinitionList getMetricList() {
-		return this.metricList;
-	}
 
 	@Override
 	public void endAttribute() {
-		// TODO Auto-generated method stub
 		
 	}
 
 	@Override
 	public MetricDefinitionList getExport() {
-		// TODO Auto-generated method stub
 		return metricList;
 	}
 }
