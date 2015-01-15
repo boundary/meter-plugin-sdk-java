@@ -65,7 +65,7 @@ public class MBeansTransformerTest {
 		MBeansTransformer<MetricDefinitionList> transformer = new MBeansTransformer<MetricDefinitionList>(client,transform,"FOO");
 		transformer.transform();
 		
-		MetricDefinitionList list = transform.getMetricList();
+		MetricDefinitionList list = transform.getExport();
 		ArrayList<MetricDefinition> a = list.getResult();
 		
 		for (MetricDefinition def : a) {
@@ -77,7 +77,7 @@ public class MBeansTransformerTest {
 	@Test
 	public void testMetricDefinitionTransform() {
 		transformer.transform();
-		MetricDefinitionList list = transform.getMetricList();
+		MetricDefinitionList list = transform.getExport();
 
 		ObjectMapper mapper = new ObjectMapper();
 		try {
