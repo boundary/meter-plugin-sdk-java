@@ -33,7 +33,7 @@ public class AttributeValueExtractor {
      * @param attr {@link MBeanAttribute}
      * @return {@link Number}
      */
-	public Number getValue(Object obj,MBeanAttribute attr) {
+	public Number getValue(Object obj,MBeanAttribute attr) throws NullPointerException {
 		Number value = 0;
 		
 		String type = attr.getDataType();
