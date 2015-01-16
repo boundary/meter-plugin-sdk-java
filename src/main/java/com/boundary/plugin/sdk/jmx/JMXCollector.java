@@ -39,6 +39,7 @@ import javax.management.ObjectInstance;
 import javax.management.ObjectName;
 import javax.management.ReflectionException;
 import javax.management.RuntimeMBeanException;
+import javax.management.openmbean.InvalidKeyException;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -148,6 +149,9 @@ public class JMXCollector implements Collector {
 		} catch (RuntimeMBeanException rt) {
 			LOG.error("RuntimeMBeanException exception ocurred while getting attribute {} from {}: {}",
 					attr.getAttribute(),instance.getObjectName(),rt.getMessage());
+		} catch (InvalidKeyException ik) {
+			LOG.error("InvalidKeyException exception ocurred while getting attribute {} from {}",
+					attr.getAttribute(),instance.getObjectName());
 		} catch (NullPointerException np) {
 			LOG.warn("Null value for attribute {} for {}",
 					instance.getObjectName(), attr.getAttribute());
