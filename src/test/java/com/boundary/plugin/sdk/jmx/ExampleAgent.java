@@ -16,9 +16,8 @@ package com.boundary.plugin.sdk.jmx;
 
 import java.lang.management.ManagementFactory;
 
-import javax.management.MBeanServerFactory;
-import javax.management.ObjectName;
 import javax.management.MBeanServer;
+import javax.management.ObjectName;
 
 /**
  * Implements a test MBeanServer for testing.
