@@ -2,6 +2,7 @@ package com.boundary.plugin.sdk.jmx;
 
 import static org.junit.Assert.*;
 
+import java.io.IOException;
 import java.util.Set;
 
 import javax.management.MBeanAttributeInfo;
@@ -62,12 +63,15 @@ public class JMXClientTest {
 	
 	@Ignore("Not working from JUnit test")
 	@Test
-	public void testConnectHostPort() throws Exception {
+	public void testConnectHostPort() {
 		JMXClient client = new JMXClient();
-		assertTrue("Check attach connect",client.connect("localhost",RMI_PORT));
-		MBeanServerConnection connection = client.getMBeanServerConnection();
-		
-		System.out.println(connection.getMBeanCount());
+		try {
+			client.connect("localhost",RMI_PORT);
+			MBeanServerConnection connection = client.getMBeanServerConnection();
+			System.out.println(connection.getMBeanCount());
+		} catch(IOException i) {
+			
+		}
 	}
 
 	@Test

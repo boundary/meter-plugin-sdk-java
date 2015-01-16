@@ -112,13 +112,16 @@ public class JMXCollector implements Collector {
 	@Override
 	public Measurement[] getMeasures() {
 		// TODO Part of the scheme to generalize collectors
-		// in the framework. Does nothing for now
+		// in the framework. Does nothing for now.
 		return null;
+	}
+	
+	public String getName() {
+		return this.name;
 	}
 	
 	public void getMetricsFromAttributes(MBeanServerConnection connection,ObjectInstance instance,MBeanAttribute attr) throws InstanceNotFoundException {
 		try {
-			System.out.println("metric: " + attr.getMetricName());
 			LOG.debug("object: {},attribute: {}, type: {}",
 					instance.getObjectName(), attr.getAttribute(),
 					attr.getDataType());
@@ -132,6 +135,8 @@ public class JMXCollector implements Collector {
 				   .setValue(value)
 				   .setTimestamp(new Date());
 			Measurement m = builder.build();
+			
+			// Sends to configured {@link MeasureWriter}
 			this.output.send(m);
 			
 		} catch (ReflectionException re) {
@@ -166,7 +171,7 @@ public class JMXCollector implements Collector {
 	 * 
 	 * @param entry {@link MBeanEntry}
 	 */
-	private void queryMBean(MBeanEntry entry) {
+	private void queryMBean(MBeanEntry entry) throws IOException {
 		try {
 			ObjectName name = new ObjectName(entry.getMbean());
 			ObjectInstance instance = this.mbeanServerConnection.getObjectInstance(name);
@@ -176,11 +181,9 @@ public class JMXCollector implements Collector {
 				}
 			}
 		} catch (MalformedObjectNameException o) {
-			System.out.println("NullPointerException");
+			LOG.error("MalformedObjectNameException for MBean: {}",entry.getMbean());
 		} catch (InstanceNotFoundException i) {
-			System.out.println("InstanceNotFoundException");
-		} catch (IOException io) {
-			System.out.println("MBeanException");
+			LOG.error("InstanceNotFoundException for MBean: {}",entry.getMbean());
 		}
 	}
 	
@@ -201,22 +204,34 @@ public class JMXCollector implements Collector {
 	
 	private CollectorState stateConnecting() {
 		CollectorState nextState = CollectorState.CONNECTING;
-		if (client.connect(item.getHost(),item.getPort())) {
-			this.mbeanServerConnection = client.getMBeanServerConnection();
-			if (this.mbeanServerConnection == null) {
-				LOG.error("MBean Server Connection is null for {}",this.name);
-				client.disconnect();
+
+		// Loop trying to establish a connection to the MBean server
+		while (nextState == CollectorState.CONNECTING) {
+			try {
+				client.connect(item.getHost(), item.getPort());
+				this.mbeanServerConnection = client.getMBeanServerConnection();
+				if (this.mbeanServerConnection == null) {
+					LOG.error("Collector: {}, MBean Server Connection is null for {}",
+							this.getName());
+					client.disconnect();
+				} else {
+					nextState = CollectorState.CONNECTED;
+					break;
+				}
+			} catch(IOException i) {
+				LOG.error("Collector: {}, Failed to connect MBeanServer at host: {}, port: {}",
+						this.getName(), item.getHost(), item.getPort());
 			}
-			else {
-				nextState = CollectorState.CONNECTED;
+			try {
+				Thread.sleep(10000);
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
 			}
-		}
-		else {
-			LOG.error("Failed to connect to host: {}, port: ",item.getHost(),item.getPort());
 		}
 		return nextState;
 	}
-	
+
 	private CollectorState stateConnected() {
 		return CollectorState.COLLECTING;
 	}
@@ -239,7 +254,13 @@ public class JMXCollector implements Collector {
 				long delta = stop - start;
 				delta = delta < 0 ? 0 : delta;
 				Thread.sleep(Long.parseLong(item.getPollInterval()) - delta);
-			} catch (InterruptedException e) {
+			} catch(IOException i) {
+				LOG.debug("Collector {}, Received IOException: {}",this.getName(),i.getMessage());
+				LOG.warn("Collector {}, Received IOException: {}",this.getName());
+				nextState = CollectorState.DISCONNECTED;
+				break;
+			}
+			catch (InterruptedException e) {
 				LOG.warn("Processing thread {} interrupted",Thread.currentThread().getName());
 				nextState = CollectorState.TERMINATED;
 			}
@@ -248,6 +269,8 @@ public class JMXCollector implements Collector {
 	}
 	
 	private CollectorState stateDisconnected() {
+		// Disconnect our client, so that we can attempt reconnect
+		client.disconnect();
 		return CollectorState.CONNECTING;
 	}
 	
@@ -268,31 +291,23 @@ public class JMXCollector implements Collector {
 			switch(this.state) {
 			case INITIALIZING:
 				this.state = stateInitializing();
-				System.out.println("INITIALIZING");
 				break;
 			case CONNECTING:
 				this.state = stateConnecting();
-				System.out.println("CONNECTING");
 				break;
 			case CONNECTED:
 				this.state = stateConnected();
-				System.out.println("CONNECTED");
 				break;
 			case COLLECTING:
 				this.state = stateCollecting();
-				System.out.println("COLLECTING");
 				break;
 			case DISCONNECTED:
 				this.state = stateDisconnected();
-				System.out.println("DISCONNECTED");
 				break;
 			case TERMINATED:
 				this.state = stateTerminated();
-				System.out.println("TERMINATED");
 				break;
 			case EXIT:
-				System.out.println("EXIT");
-
 				break;
 			}
 		} while(this.state != CollectorState.EXIT);

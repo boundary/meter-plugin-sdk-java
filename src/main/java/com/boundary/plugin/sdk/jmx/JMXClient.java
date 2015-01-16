@@ -146,24 +146,17 @@ public class JMXClient {
 	 * @param host hostname where the jvm is running
 	 * @param port Listening port of the jvm
 	 * @return {@link boolean}
+	 * @throws IOException 
 	 */
-	public boolean connect(String host, int port) {
-		boolean connected = false;
-
-		try {
-			getMBeanServerConnection(this.getRMIUrl(host,port),null);
-			connected = true;
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-		return connected;
+	public void connect(String host, int port) throws IOException {
+		getMBeanServerConnection(this.getRMIUrl(host, port), null);
 	}
 	
 	public void disconnect() {
 		try {
 			jmxConnector.close();
 		} catch (IOException e) {
-			e.printStackTrace();
+			LOG.error("Error while disconnecting: {}",e.getMessage());
 		}
 		finally {
 			jmxConnector = null;

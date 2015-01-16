@@ -14,6 +14,8 @@
 
 package com.boundary.plugin.sdk.jmx;
 
+import java.io.IOException;
+
 import org.apache.commons.cli.BasicParser;
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.CommandLineParser;
@@ -92,9 +94,10 @@ public class ExportMBeans {
 		boolean connected = false;
 		String host = cmd.getOptionValue("h");
 		int port = Integer.parseInt(cmd.getOptionValue("p"));
-		if (jmxClient.connect(host,port)) {
+		try {
+			jmxClient.connect(host,port);
 			connected = true;
-		} else {
+		} catch(IOException i) {
 			System.err.println("Unable to RMI to virtual machine at "
 					+ this.host + ":" + this.port);
 			System.exit(1);

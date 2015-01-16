@@ -61,15 +61,20 @@ public class MBeansTransformerTest {
 	public void testMetricDefinitionConstructor() {
 		MetricDefinitionTransform transform = new MetricDefinitionTransform();
 		JMXClient client = new JMXClient();
-		client.connect("localhost", 9991);
-		MBeansTransformer<MetricDefinitionList> transformer = new MBeansTransformer<MetricDefinitionList>(client,transform,"FOO");
-		transformer.transform();
-		
-		MetricDefinitionList list = transform.getExport();
-		ArrayList<MetricDefinition> a = list.getResult();
-		
-		for (MetricDefinition def : a) {
-			System.out.println(def);
+		try {
+			client.connect("localhost", 9991);
+			MBeansTransformer<MetricDefinitionList> transformer = new MBeansTransformer<MetricDefinitionList>(
+					client, transform, "FOO");
+			transformer.transform();
+
+			MetricDefinitionList list = transform.getExport();
+			ArrayList<MetricDefinition> a = list.getResult();
+
+			for (MetricDefinition def : a) {
+				System.out.println(def);
+			}
+		} catch (IOException i) {
+			i.printStackTrace();
 		}
 
 	}
@@ -96,19 +101,21 @@ public class MBeansTransformerTest {
 	public void testMBeansTransformer() {
 		MBeanTransform<MBeanMap> transform = new MBeanMapTransform();
 		JMXClient client = new JMXClient();
-		client.connect("localhost", 9991);
-		MBeansTransformer<MBeanMap> transformer = new MBeansTransformer<MBeanMap>(client,transform,"FOO");
-		transformer.transform();
-		
-		MBeanMap map = transformer.export();
-		
-		for (MBeanEntry entry : map.getMap()) {
-			System.out.println(entry);
-		}
-		
-		ObjectMapper mapper = new ObjectMapper();
 		try {
-			mapper.writeValue(System.out,map);
+			client.connect("localhost", 9991);
+			MBeansTransformer<MBeanMap> transformer = new MBeansTransformer<MBeanMap>(
+					client, transform, "FOO");
+			transformer.transform();
+
+			MBeanMap map = transformer.export();
+
+			for (MBeanEntry entry : map.getMap()) {
+				System.out.println(entry);
+			}
+
+			ObjectMapper mapper = new ObjectMapper();
+			mapper.writeValue(System.out, map);
+			
 		} catch (JsonGenerationException e) {
 			e.printStackTrace();
 		} catch (JsonMappingException e) {
