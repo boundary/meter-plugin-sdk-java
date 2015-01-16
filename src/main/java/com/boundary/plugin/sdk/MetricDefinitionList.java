@@ -18,7 +18,7 @@ import java.util.ArrayList;
 
 public class MetricDefinitionList {
 	
-	ArrayList<MetricDefinition> result;
+	private ArrayList<MetricDefinition> result;
 	
 	public MetricDefinitionList() {
 		result = new ArrayList<MetricDefinition>();
