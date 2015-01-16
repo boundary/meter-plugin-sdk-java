@@ -14,7 +14,9 @@
 
 package com.boundary.plugin.sdk.jmx;
 
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
 import java.util.concurrent.TimeUnit;
 
 import org.slf4j.Logger;
@@ -80,15 +82,16 @@ public class RunProcess implements Runnable {
 	 * Terminates the running command
 	 */
 	public void stop() {
-		while(process.isAlive()) {
-			process.destroy();
-			try {
-				process.waitFor(1000,TimeUnit.MILLISECONDS);
-			} catch (InterruptedException e) {
-			}
+		process.destroy();
+		try {
+			process.waitFor();
+		} catch (IllegalThreadStateException it) {
+
+		} catch (InterruptedException e) {
+
 		}
 	}
-	
+
 	public static void main(String []args) throws InterruptedException {
 		RunProcess agentExec = new RunProcess(RunProcess.EXEC);
 		agentExec.start();
