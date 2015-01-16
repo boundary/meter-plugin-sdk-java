@@ -49,6 +49,7 @@ import com.boundary.plugin.sdk.Measurement;
 import com.boundary.plugin.sdk.MeasurementBuilder;
 import com.boundary.plugin.sdk.MeasurementSink;
 import com.boundary.plugin.sdk.PluginUtil;
+import com.boundary.plugin.sdk.jmx.extractor.AttributeValueExtractor;
 
 /**
  * Handles the collection of metrics from a JMX connection.

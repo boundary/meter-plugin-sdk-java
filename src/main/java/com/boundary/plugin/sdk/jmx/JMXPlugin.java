@@ -23,6 +23,7 @@ import org.slf4j.LoggerFactory;
 import com.boundary.plugin.sdk.CollectorDispatcher;
 import com.boundary.plugin.sdk.MeasurementSink;
 import com.boundary.plugin.sdk.Plugin;
+import com.boundary.plugin.sdk.jmx.extractor.AttributeValueExtractor;
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
