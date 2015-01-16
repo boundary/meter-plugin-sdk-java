@@ -23,7 +23,7 @@ import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-public class JMXPluginConfiguration implements PluginConfiguration{
+public class JMXPluginConfiguration implements PluginConfiguration {
 
 	private ArrayList<JMXPluginConfigurationItem> items;
 	private int pollInterval;
@@ -52,7 +52,7 @@ public class JMXPluginConfiguration implements PluginConfiguration{
 		ObjectMapper mapper = new ObjectMapper();
 		JMXPluginConfiguration configuration = null;
 		try {
-			configuration = mapper.readValue(new File("param.json"), JMXPluginConfiguration.class);
+			configuration = mapper.readValue(new File(PLUGIN_PARAMETER_FILENAME), JMXPluginConfiguration.class);
 		} catch (JsonParseException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

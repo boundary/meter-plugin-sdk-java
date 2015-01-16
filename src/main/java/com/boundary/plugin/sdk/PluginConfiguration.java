@@ -16,5 +16,6 @@ package com.boundary.plugin.sdk;
 
 public interface PluginConfiguration {
 
+	public static final String PLUGIN_PARAMETER_FILENAME = "param.json";
 }
 
