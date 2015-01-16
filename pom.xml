@@ -12,8 +12,8 @@
     <maven-javadoc-plugin-version>2.9.1</maven-javadoc-plugin-version>
     
     <!-- java versions -->
-    <java-target-version>1.8</java-target-version>
-    <java-source-version>1.8</java-source-version>
+    <java-target-version>1.7</java-target-version>
+    <java-source-version>1.7</java-source-version>
     
     <!-- Dependency Versions -->
     <commons-cli-version>1.2</commons-cli-version>
