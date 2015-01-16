@@ -27,11 +27,18 @@
 
 package com.boundary.plugin.sdk.jmx;
 
+import java.io.IOException;
 import java.util.Date;
 
+import javax.management.AttributeNotFoundException;
+import javax.management.InstanceNotFoundException;
+import javax.management.MBeanException;
 import javax.management.MBeanServerConnection;
+import javax.management.MalformedObjectNameException;
 import javax.management.ObjectInstance;
 import javax.management.ObjectName;
+import javax.management.ReflectionException;
+import javax.management.RuntimeMBeanException;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -61,6 +68,22 @@ import com.boundary.plugin.sdk.PluginUtil;
 public class JMXCollector implements Collector {
 	
 	private static Logger LOG = LoggerFactory.getLogger(JMXCollector.class);
+	
+	/**
+	 * Defines the states of our state machine
+	 *
+	 */
+	private enum CollectorState {
+		INITIALIZING,
+		CONNECTING,
+		CONNECTED,
+		COLLECTING,
+		DISCONNECTED,
+		TERMINATED,
+		EXIT
+	};
+	
+	private CollectorState state;
 
 	private JMXClient client;
 	private JMXPluginConfigurationItem item;
@@ -68,6 +91,8 @@ public class JMXCollector implements Collector {
 	private MeasurementSink output;
 	private String name;
 	private AttributeValueExtractor valueExtractor;
+	private String source;
+	private MBeanServerConnection mbeanServerConnection;
 
 	public JMXCollector(String name,
 			JMXPluginConfigurationItem item,
@@ -80,73 +105,194 @@ public class JMXCollector implements Collector {
 		this.mbeanMap = mbeanMap;
 		this.output = output;
 		this.valueExtractor = valueExtractor;
+		this.state = CollectorState.INITIALIZING;
 	}
 
 	@Override
 	public Measurement[] getMeasures() {
-		// TODO Auto-generated method stub
+		// TODO Part of the scheme to generalize collectors
+		// in the framework. Does nothing for now
 		return null;
 	}
-
-	@Override
-	public void run() {
-		
-		if (client.connect(item.getHost(), item.getPort()) == false) {
-			LOG.error("Failed to connect to host: {}, port: ",item.getHost(),item.getPort());
-			new Exception(String.format("Failed to connect to host: %s, port: %d",item.getHost(),item.getPort()));
-		}
-
-		MBeanServerConnection connection = client.getMBeanServerConnection();
-		if (connection == null) {
+	
+	public void getMetricsFromAttributes(MBeanServerConnection connection,ObjectInstance instance,MBeanAttribute attr) throws InstanceNotFoundException {
+		try {
+			System.out.println("metric: " + attr.getMetricName());
+			LOG.debug("object: {},attribute: {}, type: {}",
+					instance.getObjectName(), attr.getAttribute(),
+					attr.getDataType());
+			Object obj = connection.getAttribute(instance.getObjectName(),attr.getAttribute());
+			LOG.debug("metric: {}, object class: {}, value: {}",
+					attr.getMetricName(), obj.getClass(), obj);
+			Number value = valueExtractor.getValue(obj,attr);
+			MeasurementBuilder builder = new MeasurementBuilder();
+			builder.setName(attr.getMetricName())
+			       .setSource(this.source)
+				   .setValue(value)
+				   .setTimestamp(new Date());
+			Measurement m = builder.build();
+			this.output.send(m);
 			
+		} catch (ReflectionException re) {
+			LOG.error("Reflection exception ocurred while getting attribute {} from {}",
+					attr.getAttribute(),instance.getObjectName());
+		} catch (IOException io) {
+			LOG.error("Reflection exception ocurred while getting attribute {} from {}",
+					attr.getAttribute(),instance.getObjectName());
+		} catch (AttributeNotFoundException nf) {
+			LOG.warn("AttributeNotFoundException exception ocurred while getting attribute {} from {}.",
+					attr.getAttribute(),instance.getObjectName());
+		} catch (MBeanException m) {
+			LOG.error("MBeanException exception ocurred while getting attribute {} from {}",
+					attr.getAttribute(),instance.getObjectName());
+		} catch (RuntimeMBeanException rt) {
+			LOG.error("RuntimeMBeanException exception ocurred while getting attribute {} from {}: {}",
+					attr.getAttribute(),instance.getObjectName(),rt.getMessage());
+		} catch (NullPointerException np) {
+			LOG.warn("Null value for attribute {} for {}",
+					instance.getObjectName(), attr.getAttribute());
+		} catch (UnsupportedOperationException o) {
+			LOG.warn("UnsupportedOperationException while getting attribute {} for {}",
+					instance.getObjectName(), attr.getAttribute());
 		}
-		
-		String source = null;
+	}
+	
+	/**
+	 * Fetches an MBean attributes and then collects metrics
+	 * 
+	 * @param entry {@link MBeanEntry}
+	 */
+	private void queryMBean(MBeanEntry entry) {
+		try {
+			ObjectName name = new ObjectName(entry.getMbean());
+			ObjectInstance instance = this.mbeanServerConnection.getObjectInstance(name);
+			for (MBeanAttribute attr : entry.getAttributes()) {
+				if (attr.isEnabled()) {
+					getMetricsFromAttributes(this.mbeanServerConnection,instance,attr);
+				}
+			}
+		} catch (MalformedObjectNameException o) {
+			System.out.println("NullPointerException");
+		} catch (InstanceNotFoundException i) {
+			System.out.println("InstanceNotFoundException");
+		} catch (IOException io) {
+			System.out.println("MBeanException");
+		}
+	}
+	
+	/**
+	 * 
+	 * @return {@link CollectorState}
+	 */
+	private CollectorState stateInitializing() {
+		// Used the source specified in the configuration or use the
+		// host name as the default
 		if (item.getSource() == null) {
-			source = PluginUtil.getHostname();
+			this.source = PluginUtil.getHostname();
+		} else {
+			this.source = item.getSource();
+		}
+		return CollectorState.CONNECTING;
+	}
+	
+	private CollectorState stateConnecting() {
+		CollectorState nextState = CollectorState.CONNECTING;
+		if (client.connect(item.getHost(),item.getPort())) {
+			this.mbeanServerConnection = client.getMBeanServerConnection();
+			if (this.mbeanServerConnection == null) {
+				LOG.error("MBean Server Connection is null for {}",this.name);
+				client.disconnect();
+			}
+			else {
+				nextState = CollectorState.CONNECTED;
+			}
 		}
 		else {
-			source = item.getSource();
+			LOG.error("Failed to connect to host: {}, port: ",item.getHost(),item.getPort());
 		}
-
-		while (true) {
+		return nextState;
+	}
+	
+	private CollectorState stateConnected() {
+		return CollectorState.COLLECTING;
+	}
+	
+	private CollectorState stateCollecting() {
+		CollectorState nextState = CollectorState.DISCONNECTED;
+		
+		// Continuously loop until the thread is interrupted 
+		while (nextState != CollectorState.TERMINATED) {
 			try {
 				long start = new Date().getTime();
 				for (MBeanEntry entry : mbeanMap.getMap()) {
 					if (entry.isEnabled()) {
-						ObjectName name = new ObjectName(entry.getMbean());
-						ObjectInstance instance = connection
-								.getObjectInstance(name);
-						for (MBeanAttribute attr : entry.getAttributes()) {
-							if (attr.isEnabled()) {
-								LOG.debug("object: {},attribute: {}, type: {}",
-										instance.getObjectName(),attr.getAttribute(),attr.getDataType());
-								Object obj = connection.getAttribute(
-										instance.getObjectName(),
-										attr.getAttribute());
-								LOG.debug("metric: {}, object class: {}, value: {}",attr.getMetricName(),obj.getClass(),obj);
-								Number value = valueExtractor.getValue(obj,attr);
-								MeasurementBuilder builder = new MeasurementBuilder();
-								builder.setName(attr.getMetricName())
-								       .setSource(source)
-								       .setValue(value)
-								       .setTimestamp(new Date());
-								Measurement m = builder.build();
-								output.send(m);
-							}
-						}
+						queryMBean(entry);
 					}
 				}
-				// TBD: How to handle if the sample time is longer than the amount of time it
-				// takes to collect the metrics.
+				// TBD: How to handle if the sample time is longer
+				// than the amount of time it takes to collect the metrics.
 				long stop = new Date().getTime();
 				long delta = stop - start;
 				delta = delta < 0 ? 0 : delta;
 				Thread.sleep(Long.parseLong(item.getPollInterval()) - delta);
-			} catch (Exception e) {
-				e.printStackTrace();
-				System.exit(1);
+			} catch (InterruptedException e) {
+				LOG.warn("Processing thread {} interrupted",Thread.currentThread().getName());
+				nextState = CollectorState.TERMINATED;
 			}
 		}
+		return nextState;
+	}
+	
+	private CollectorState stateDisconnected() {
+		return CollectorState.CONNECTING;
+	}
+	
+	private CollectorState stateTerminated() {
+		return CollectorState.EXIT;
+	}
+
+	/**
+	 * This is our main processing loop that is run by a separate thread.
+	 * 
+	 * All exceptions and retry cases need to be handled in this loop.
+	 */
+	@Override
+	public void run() {
+		
+		do {
+			LOG.info("Collector {} state is {}",name,state);
+			switch(this.state) {
+			case INITIALIZING:
+				this.state = stateInitializing();
+				System.out.println("INITIALIZING");
+				break;
+			case CONNECTING:
+				this.state = stateConnecting();
+				System.out.println("CONNECTING");
+				break;
+			case CONNECTED:
+				this.state = stateConnected();
+				System.out.println("CONNECTED");
+				break;
+			case COLLECTING:
+				this.state = stateCollecting();
+				System.out.println("COLLECTING");
+				break;
+			case DISCONNECTED:
+				this.state = stateDisconnected();
+				System.out.println("DISCONNECTED");
+				break;
+			case TERMINATED:
+				this.state = stateTerminated();
+				System.out.println("TERMINATED");
+				break;
+			case EXIT:
+				System.out.println("EXIT");
+
+				break;
+			}
+		} while(this.state != CollectorState.EXIT);
+		
+		System.out.println("complete");
 	}
 }
