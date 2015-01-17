@@ -28,6 +28,9 @@
 package com.boundary.plugin.sdk.jmx;
 
 import java.io.IOException;
+import java.net.ConnectException;
+import java.net.NoRouteToHostException;
+import java.net.UnknownHostException;
 import java.util.Date;
 
 import javax.management.AttributeNotFoundException;
@@ -219,7 +222,16 @@ public class JMXCollector implements Collector {
 					nextState = CollectorState.CONNECTED;
 					break;
 				}
-			} catch(IOException i) {
+			} catch(UnknownHostException e) {
+				LOG.error("Collector: {}, Unknown host: {}, port: {}",
+						this.getName(), item.getHost(), item.getPort());
+			} catch(NoRouteToHostException e) {
+				LOG.error("Collector: {}, No route to host: {}, port: {}",
+						this.getName(), item.getHost(), item.getPort());
+			} catch(ConnectException e) {
+				LOG.error("Collector: {}, Failed to connect MBeanServer at host: {}, port: {}",
+						this.getName(), item.getHost(), item.getPort());
+			} catch(IOException e) {
 				LOG.error("Collector: {}, Failed to connect MBeanServer at host: {}, port: {}",
 						this.getName(), item.getHost(), item.getPort());
 			}
