@@ -14,9 +14,12 @@
 
 package com.boundary.plugin.sdk.jmx;
 
-import java.util.ArrayList;
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
+import static com.fasterxml.jackson.annotation.JsonInclude.*;
+
+@JsonInclude(Include.NON_NULL)
 public class MBeanEntry {
 	
 	private String mbean;

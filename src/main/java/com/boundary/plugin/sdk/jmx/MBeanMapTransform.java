@@ -63,7 +63,7 @@ public class MBeanMapTransform extends MBeanTransformBase<MBeanMap> {
 	public void beginAttribute(ObjectName name,MBeanAttributeInfo info) {
 		MBeanAttribute attr = new MBeanAttribute();
 		attr.setAttribute(info.getName());
-		attr.setDataType(info.getType());
+		//attr.setDataType(info.getType());
 		attr.setMetricType(MBeanAttribute.MetricType.standard);
 		attr.setMetricName(this.getMetricName(name,info));
 		mbeanAttributes.add(attr);
