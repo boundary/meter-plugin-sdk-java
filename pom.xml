@@ -6,10 +6,12 @@
   <groupId>com.boundary.plugins</groupId>
   <artifactId>java-plugin-framework</artifactId>
   <version>1.0.0</version>
+  <name>Boundary Plugin Java Framework</name>
   <properties>
     <!-- Plugin Versions -->
     <maven-compiler-version>3.1</maven-compiler-version>
     <maven-javadoc-plugin-version>2.9.1</maven-javadoc-plugin-version>
+    <maven-gpg-plugin-version>1.5</maven-gpg-plugin-version>
     
     <!-- java versions -->
     <java-target-version>1.7</java-target-version>
@@ -117,6 +119,7 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-gpg-plugin</artifactId>
+        <version>${maven-gpg-plugin-version}</version>
 <!--
         <executions>
           <execution>
