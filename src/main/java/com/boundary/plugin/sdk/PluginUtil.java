@@ -1,4 +1,4 @@
-// Copyright 2014 Boundary, Inc.
+// Copyright 2014-2015 Boundary, Inc.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -47,8 +47,8 @@ public class PluginUtil {
 	/**
 	 * Transform a camel case string into a upper case string with underscores
 	 * 
-	 * @param s {@String} to transform
-	 * @param d {@char} replacement character for white space
+	 * @param s {@link String} to transform
+	 * @param d replacement character for white space
 	 * @return {@link String}
 	 */
 	public static String toUpperUnderscore(String s, Character d) {

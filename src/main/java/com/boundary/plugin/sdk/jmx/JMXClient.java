@@ -1,4 +1,4 @@
-// Copyright 2014 Boundary, Inc.
+// Copyright 2014-2015 Boundary, Inc.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -91,7 +91,7 @@ public class JMXClient {
 	 * Builds the path to the management agent.
 	 * 
 	 * @param javaHome Path to the "java.home" system property
-	 * @return String path to management agent jar file
+	 * @return {@link String} path to management agent jar file
 	 */
 	private String getAgentPath(String javaHome) {
 		return javaHome + File.separator + "lib" + File.separator + "management-agent.jar";
@@ -103,7 +103,7 @@ public class JMXClient {
 	 * TODO: Better handling of the exceptions, duplicate display names
 	 * 
 	 * @param name Display name of the VM.
-	 * @return {@link boolean}
+	 * @return boolean indicating if connection was successful
 	 */
 	public boolean connect(String name) {
 		boolean connected = false;
@@ -132,9 +132,9 @@ public class JMXClient {
 	
 	/**
 	 * Formats a a service url from the input host and port.
-	 * @param host
-	 * @param port
-	 * @return String
+	 * @param host Host where the JVM is running
+	 * @param port Port on which the MBean Server is listening
+	 * @return {@link String} Formatted url to connect via RMI
 	 */
 	private String getRMIUrl(String host,int port) {
 		return String.format("service:jmx:rmi:///jndi/rmi://%s:%d/jmxrmi",host,port);
@@ -144,14 +144,16 @@ public class JMXClient {
 	 * Connect to MBean Server via RMI using host and port.
 	 * 
 	 * @param host hostname where the jvm is running
-	 * @param port Listening port of the jvm
-	 * @return {@link boolean}
+	 * @param port Listening port of the jvm MBean Server
 	 * @throws IOException 
 	 */
 	public void connect(String host, int port) throws IOException {
 		getMBeanServerConnection(this.getRMIUrl(host, port), null);
 	}
 	
+	/**
+	 * Closes the connection to the MBean Server
+	 */
 	public void disconnect() {
 		try {
 			jmxConnector.close();
@@ -170,7 +172,7 @@ public class JMXClient {
 	 * @param port Listening port of the jvm
 	 * @param user User name to used to authenticate
 	 * @param password Credentials used to authenticate
-	 * @return {@link boolean}
+	 * @return boolean Indicates if the connection was successful
 	 */
 	public boolean connect(String host,int port,String user,String password) {
 		boolean connected = false;

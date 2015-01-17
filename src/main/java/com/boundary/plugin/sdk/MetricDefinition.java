@@ -1,4 +1,4 @@
-// Copyright 2014 Boundary, Inc.
+// Copyright 2014-2015 Boundary, Inc.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -72,7 +72,7 @@ public class MetricDefinition {
 	 * 
 	 * Optional if updating.
 	 * 
-	 * @return {@link long}
+	 * @return long
 	 */
 	public long getDefaultResolutionMS() {
 		return defaultResolutionMS;
@@ -88,7 +88,7 @@ public class MetricDefinition {
 	 * </ul>
 	 * 
 	 * Optional if updating
-	 * @return
+	 * @return {@link MetricAggregate}
 	 */
 	public MetricAggregate getDefaultAggregate() {
 		return defaultAggregate;
@@ -116,7 +116,7 @@ public class MetricDefinition {
 	 * 
 	 * Optional if updating
 	 * 
-	 * @return {@link boolean}
+	 * @return boolean
 	 */
 	public boolean getIsDisabled() {
 		return isDisabled;
