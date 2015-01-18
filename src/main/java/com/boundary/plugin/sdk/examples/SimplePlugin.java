@@ -19,8 +19,8 @@ import java.io.IOException;
 import java.util.ArrayList;
 
 import com.boundary.plugin.sdk.MeasurementSink;
+import com.boundary.plugin.sdk.MeasurementSinkStandardOut;
 import com.boundary.plugin.sdk.Plugin;
-import com.boundary.plugin.sdk.PluginConfiguration;
 import com.boundary.plugin.sdk.CollectorDispatcher;
 import com.boundary.plugin.sdk.PluginRunner;
 import com.fasterxml.jackson.core.JsonParseException;
@@ -36,6 +36,8 @@ public class SimplePlugin implements Plugin<SimplePluginConfiguration> {
 	@Override
 	public void setConfiguration(SimplePluginConfiguration configuration) {
 		this.configuration = configuration;
+		this.output = new MeasurementSinkStandardOut();
+		output.getClass();
 	}
 	
 	@Override

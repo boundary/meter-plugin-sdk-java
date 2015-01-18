@@ -35,6 +35,10 @@ public class SimpleCollector implements Collector {
 		// TODO Auto-generated method stub
 		return null;
 	}
+	
+	String getName() {
+		return this.name;
+	}
 
 	@Override
 	public void run() {

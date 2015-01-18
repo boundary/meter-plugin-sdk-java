@@ -28,4 +28,19 @@ package com.boundary.plugin.sdk;
 public class Dashboard {
 	String name;
 	String layout;
+	
+	public Dashboard() {
+		this.name = "";
+		this.layout = "";
+	}
+
+	public String getName() {
+		return name;
+	}
+
+	public String getLayout() {
+		return layout;
+	}
+	
+	
 }

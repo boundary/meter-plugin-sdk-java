@@ -34,7 +34,7 @@ public class PluginRunner {
 	 * Outputs usage to standard error
 	 */
 	private static void Usage() {
-		System.err.printf("{} <class name>\n",PluginRunner.class.toString());
+		System.err.printf("%s <class name>%n",PluginRunner.class.toString());
 		System.exit(1);
 	}
 	

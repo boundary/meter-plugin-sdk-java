@@ -32,6 +32,7 @@ public class MBeanMapTest {
 		attr.setDataType("long");
 		attr.setMetricType(MetricType.standard);
 		attr.setScale(1.0);
+		attr.setEnabled(false);
 		
 		List<MBeanAttribute> attributes = new ArrayList<MBeanAttribute>();
 		attributes.add(attr);

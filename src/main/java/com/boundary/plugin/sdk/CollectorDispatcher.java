@@ -25,7 +25,6 @@ import java.util.concurrent.Executors;
  */
 public class CollectorDispatcher {
 	
-	Executor executor;
 	List<Collector> collectorList;
 	
 	/**

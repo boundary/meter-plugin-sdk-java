@@ -14,11 +14,26 @@
 
 package com.boundary.plugin.sdk;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class ParamArray {
 	
 	List<String> itemTitle;
 	String schemaTitle;
+	
+	public ParamArray() {
+		this.itemTitle = new ArrayList<String>();
+		this.schemaTitle = "";
+	}
+
+	public List<String> getItemTitle() {
+		return itemTitle;
+	}
+
+	public String getSchemaTitle() {
+		return schemaTitle;
+	}
+	
 
 }

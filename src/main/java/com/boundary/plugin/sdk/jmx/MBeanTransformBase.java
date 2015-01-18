@@ -22,9 +22,8 @@ import com.boundary.plugin.sdk.PluginUtil;
 
 public abstract class MBeanTransformBase<E> implements MBeanTransform<E> {
 	
-	protected final char METRIC_NAME_SEPARATOR='.';
+	protected final static char METRIC_NAME_SEPARATOR='.';
 	protected String prefix;
-	private E export;
 
 	/**
 	 * Generates a metrics name from the MBean name and MBean attribute name
@@ -67,9 +66,5 @@ public abstract class MBeanTransformBase<E> implements MBeanTransform<E> {
 	
 	public void setPrefix(String prefix) {
 		this.prefix = prefix;
-	}
-	
-	public E getExport() {
-		return export;
 	}
 }

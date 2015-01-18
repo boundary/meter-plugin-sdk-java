@@ -48,7 +48,7 @@ public class MeasurementBuilder {
 	}
 
 	public MeasurementBuilder setTimestamp(Date timestamp) {
-		this.timestamp = timestamp;
+		this.timestamp = (Date)timestamp.clone();
 		return this;
 	}
 	

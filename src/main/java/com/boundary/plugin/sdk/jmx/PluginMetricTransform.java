@@ -49,7 +49,7 @@ public class PluginMetricTransform extends MBeanTransformBase<PluginMetrics> {
 
 	@Override
 	public void beginAttribute(ObjectName name, MBeanAttributeInfo info) {
-		pluginMetrics.getMetrics().add(new String(this.getMetricName(name, info)));                                
+		pluginMetrics.getMetrics().add(this.getMetricName(name, info));                                
 	}
 
 	@Override

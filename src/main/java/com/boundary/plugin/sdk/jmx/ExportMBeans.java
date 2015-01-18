@@ -23,6 +23,7 @@ import org.apache.commons.cli.HelpFormatter;
 import org.apache.commons.cli.Option;
 import org.apache.commons.cli.OptionBuilder;
 import org.apache.commons.cli.Options;
+import org.apache.commons.cli.ParseException;
 
 import com.boundary.plugin.sdk.MetricDefinitionList;
 
@@ -89,20 +90,12 @@ public class ExportMBeans {
 	 * Connects to java virtual machine using RMI
 	 * 
 	 * @return {@link boolean} returns <code>true</code> if connection successful.
+	 * @throws IOException 
 	 */
-	private boolean connect() {
-		boolean connected = false;
+	private void connect() throws IOException {
 		String host = cmd.getOptionValue("h");
 		int port = Integer.parseInt(cmd.getOptionValue("p"));
-		try {
-			jmxClient.connect(host,port);
-			connected = true;
-		} catch(IOException i) {
-			System.err.println("Unable to RMI to virtual machine at "
-					+ this.host + ":" + this.port);
-			System.exit(1);
-		}
-		return connected;
+		jmxClient.connect(host,port);
 	}
 	
 	private void exportMBEANS() {
@@ -127,7 +120,7 @@ public class ExportMBeans {
 	}
 	
 	@SuppressWarnings("static-access")
-	private void parseCommandLineOptions(String[] args) {
+	private void buildOptions() {
 		helpOption = OptionBuilder
 				.withDescription("Display help information")
 				.withLongOpt("help")
@@ -180,62 +173,71 @@ public class ExportMBeans {
 		options.addOption(outputFileOption);
 		options.addOption(prefixOption);
 
-		try {
-			CommandLineParser parser = new BasicParser();
-			cmd = parser.parse(options,args);
-
-			// If the help argument is present then display usage
-			if (cmd.hasOption("?") == true) {
-				usage();
-			}
-			
-			// Set the prefix default to empty if not specified.
-			this.prefix = cmd.getOptionValue("x");
-			if (cmd.getOptionValue("e") != null) {
-				// Determine what is to be exported
-				switch(cmd.getOptionValue("e")) {
-				case "mbeans":
-					exportType = ExportType.MBEANS;
-					break;
-				case "metrics":
-					exportType = ExportType.METRICS;
-					break;
-				case "plugins":
-					exportType = ExportType.PLUGINS;
-					break;
-				default:
-					usage();
-				}
-			}
-		} catch (Exception e) {
-			usage();
-		}
-		
 	}
-	private void execute(String[] args) {
-
-		parseCommandLineOptions(args);
 	
-		if (this.connect()) {
-			
-			switch(exportType) {
-			case MBEANS:
-				exportMBEANS();
+	private void setExportType() {
+		// Set the prefix default to empty if not specified.
+		this.prefix = cmd.getOptionValue("x");
+		if (cmd.getOptionValue("e") != null) {
+			// Determine what is to be exported
+			switch (cmd.getOptionValue("e")) {
+			case "mbeans":
+				exportType = ExportType.MBEANS;
 				break;
-			case METRICS:
-				exportMETRICS();
+			case "metrics":
+				exportType = ExportType.METRICS;
 				break;
-			case PLUGINS:
-				exportPLUGINS();
+			case "plugins":
+				exportType = ExportType.PLUGINS;
 				break;
 			default:
-				assert false: "Undefined export type";
+				usage();
 			}
-			this.jmxClient.disconnect();
 		}
-		else {
-			System.err.printf("Failed to connect to Virtual Machine: host => %s, port %d\n",
-					this.host,this.port);
+	}
+	
+	private void parseCommandLineOptions(String[] args) throws Exception {
+
+		buildOptions();
+		
+		CommandLineParser parser = new BasicParser();
+		cmd = parser.parse(options, args);
+
+		// If the help argument is present then display usage
+		if (cmd.hasOption("?") == true) {
+			usage();
+		}
+
+		setExportType();
+	}
+	
+	private void export() {
+		switch (exportType) {
+		case MBEANS:
+			exportMBEANS();
+			break;
+		case METRICS:
+			exportMETRICS();
+			break;
+		case PLUGINS:
+			exportPLUGINS();
+			break;
+		default:
+			assert false : "Undefined export type";
+		}
+	}
+	
+	
+	private void execute(String[] args) {
+		try {
+			this.parseCommandLineOptions(args);
+			this.connect();
+			this.export();
+			this.jmxClient.disconnect();
+		} catch (ParseException e) {
+			this.usage();
+		} catch (Exception e) {
+			System.err.printf("%s%n", e.getMessage());
 		}
 	}
 

@@ -16,15 +16,19 @@ package com.boundary.plugin.sdk.jmx;
 import java.io.IOException;
 import java.util.List;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.sun.tools.attach.AttachNotSupportedException;
 import com.sun.tools.attach.VirtualMachine;
 import com.sun.tools.attach.VirtualMachineDescriptor;
 import com.sun.tools.attach.spi.AttachProvider;
 
 public class ListVirtualMachines {
+	
+	private static Logger LOG = LoggerFactory.getLogger(ListVirtualMachines.class);
 
 	public ListVirtualMachines() {
-		// TODO Auto-generated constructor stub
 	}
 	
 	public static void printVirtualMachineDescriptor(VirtualMachineDescriptor vmd) {
@@ -34,11 +38,10 @@ public class ListVirtualMachines {
 		
 		try {
 			VirtualMachine vm = provider.attachVirtualMachine(vmd);
+			LOG.info("Virtual Machine Id: {}", vm.id());
 		} catch (AttachNotSupportedException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} catch (IOException e) {
-			// TODO Auto-generated catch blockq
 			e.printStackTrace();
 		}
 	}
@@ -50,5 +53,4 @@ public class ListVirtualMachines {
 			printVirtualMachineDescriptor(vm);
 		}
 	}
-
 }
