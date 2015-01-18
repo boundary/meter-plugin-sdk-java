@@ -41,7 +41,7 @@ import org.xml.sax.SAXException;
 public class GetPluginJar implements PostInstall {
 
 	private final static String POM_PATH="pom.xml";
-	private final static String JAR_DESTINATION_PATH="config/plugin.json";
+	private final static String JAR_DESTINATION_PATH="config/plugin.jar";
 	private final static String VERSION_XPATH_EXPRESSION = "/project/version";
 	private final static String BASE_URL_XPATH_EXPRESSION = "/project/properties/boundary-jar-base-url";
 	private final static String JAR_BASE_NAME_EXPRESSION = "/project/name";
@@ -81,7 +81,6 @@ public class GetPluginJar implements PostInstall {
 		} catch (FileNotFoundException e) {
 			throw e;
 		}
-		// LOG.debug("baseUrl: {}, version: {}, jarBaseName",this.baseUrl,this.version,this.jarBaseName);
 	}
 
 	public void downloadJAR() throws IOException {
@@ -89,7 +88,6 @@ public class GetPluginJar implements PostInstall {
 		try {
 			HttpsURLConnection connection = null;
 			String sUrl = String.format("%s/%s/%s-%s.jar",this.baseUrl,this.version,this.jarBaseName,this.version);
-			System.err.println(sUrl);
 			
 			URL url = new URL(sUrl);
 			connection = (HttpsURLConnection) url.openConnection();
@@ -98,45 +96,48 @@ public class GetPluginJar implements PostInstall {
 			HttpsURLConnection.setFollowRedirects(true);
 
 			InputStream in = connection.getInputStream();
+			System.err.printf("Downloading jar from %s%n",connection.getURL());
 			out = new FileOutputStream(new File(JAR_DESTINATION_PATH));
 			byte [] b = new byte[1024];
 			connection.connect();
 			
 			while(in.read(b) != -1) {
+				System.err.printf(".");
 				out.write(b);
 			}
 			
 			out.close();
 
 		} catch (FileNotFoundException e) {
-			System.err.printf("%s",e.getMessage());
+			System.err.printf("%s%n",e.getMessage());
 		} catch (MalformedURLException e) {
-			System.err.printf("%s",e.getMessage());
+			System.err.printf("%s%n",e.getMessage());
 		} catch (IOException e) {
+			System.err.printf("%s%n",e.getMessage());
 			out.close();
 			throw e;
 		}
 	}
 	
 	public void execute(String[] args) {
-		
+		System.err.println("Executing post extract...");
 		try {
 			readPOM(POM_PATH);
 			downloadJAR();
 		} catch (XPathExpressionException e) {
-			System.err.printf("%s",e.getMessage());
+			System.err.printf("%s%n",e.getMessage());
 		} catch (ParserConfigurationException e) {
-			System.err.printf("%s",e.getMessage());
+			System.err.printf("%s%n",e.getMessage());
 		} catch (SAXException e) {
-			System.err.printf("%s",e.getMessage());
+			System.err.printf("%s%n",e.getMessage());
 		} catch (IOException e) {
-			System.err.printf("%s",e.getMessage());
+			System.err.printf("%s%n",e.getMessage());
 		}
+		System.err.flush();
 	}
 	
 	public static void main(String [] args) {
 		GetPluginJar gpJar = new GetPluginJar();
 		gpJar.execute(args);
 	}
-
 }
