@@ -60,7 +60,7 @@ public class DownloadPluginJar implements PostExtract {
 
 	}
 	
-	public void readPOM(String pomFile) throws ParserConfigurationException,
+	private void readPOM(String pomFile) throws ParserConfigurationException,
 			SAXException, XPathExpressionException, IOException {
 		DocumentBuilder parser = DocumentBuilderFactory.newInstance()
 				.newDocumentBuilder();
@@ -90,7 +90,7 @@ public class DownloadPluginJar implements PostExtract {
 		}
 	}
 
-	public void downloadJAR() throws IOException {
+	private void downloadJAR() throws IOException {
 		OutputStream out = null;
 		try {
 			HttpsURLConnection connection = null;
