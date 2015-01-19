@@ -33,9 +33,6 @@ import javax.xml.xpath.XPathConstants;
 import javax.xml.xpath.XPathExpressionException;
 import javax.xml.xpath.XPathFactory;
 
-
-//import org.slf4j.Logger;
-//import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
 import org.xml.sax.SAXException;
 
@@ -163,5 +160,10 @@ public class DownloadPluginJar implements PostExtract {
 		}
 		// Ensure that the standard error is flushed before exiting.
 		System.err.flush();
+	}
+	
+	public static void main(String [] args) {
+		DownloadPluginJar postExtract = new DownloadPluginJar();
+		postExtract.execute(args);
 	}
 }
