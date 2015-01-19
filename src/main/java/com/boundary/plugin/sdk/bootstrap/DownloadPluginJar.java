@@ -43,7 +43,6 @@ import com.boundary.plugin.sdk.PostExtract;
 
 /**
  * Utility class for downloading a plugin from a release in GitHub
- *
  */
 public class DownloadPluginJar implements PostExtract {
 
@@ -60,12 +59,21 @@ public class DownloadPluginJar implements PostExtract {
 
 	}
 	
-	private void readPOM(String pomFile) throws ParserConfigurationException,
+	/**
+	 * Reads the pom.xml file to extract information to find the jar plugin.
+	 * 
+	 * @param pomFile Maven POM file path
+	 * @throws ParserConfigurationException Indicates a failure to parse the pom.xml file
+	 * @throws SAXException SAX parsing issue
+	 * @throws XPathExpressionException Incorrect XPath expression to extract data
+	 * @throws IOException Other kind of IO error
+	 */
+	private void readPOM() throws ParserConfigurationException,
 			SAXException, XPathExpressionException, IOException {
 		DocumentBuilder parser = DocumentBuilderFactory.newInstance()
 				.newDocumentBuilder();
 		try {
-			FileInputStream input = new FileInputStream(new File(pomFile));
+			FileInputStream input = new FileInputStream(new File(POM_PATH));
 			try {
 				Document document = parser.parse(input);
 
@@ -90,11 +98,17 @@ public class DownloadPluginJar implements PostExtract {
 		}
 	}
 
+	/**
+	 * Downloads a jar file based on pom.xml information
+	 * to the configuration directory <code>config</code>
+	 * 
+	 * @throws IOException Any kind of IO error occurs
+	 */
 	private void downloadJAR() throws IOException {
 		OutputStream out = null;
 		try {
 			HttpsURLConnection connection = null;
-			String sUrl = String.format("%s/%s/%s-%s.jar",this.baseUrl,this.version,this.jarBaseName,this.version);
+			String sUrl = String.format("%s/%s/plugin.jar",this.baseUrl,this.version);
 			
 			URL url = new URL(sUrl);
 			connection = (HttpsURLConnection) url.openConnection();
@@ -103,48 +117,54 @@ public class DownloadPluginJar implements PostExtract {
 			HttpsURLConnection.setFollowRedirects(true);
 
 			InputStream in = connection.getInputStream();
-			System.err.printf("Downloading jar from %s%n",connection.getURL());
+
 			out = new FileOutputStream(new File(JAR_DESTINATION_PATH));
 			byte [] b = new byte[1024];
-			connection.connect();
 			
+			//connection.connect();
+			System.err.printf("Downloading jar of %d bytes from %s...%n",
+					connection.getContentLength(),connection.getURL());
+			System.err.printf("to %s%n",JAR_DESTINATION_PATH);
+			int i = 1;
 			while(in.read(b) != -1) {
-				System.err.printf(".");
+				if (i % 1024 == 0) System.err.print(".");
 				out.write(b);
+				i++;
 			}
 			
 			out.close();
-
-		} catch (FileNotFoundException e) {
-			System.err.printf("%s%n",e.getMessage());
-		} catch (MalformedURLException e) {
-			System.err.printf("%s%n",e.getMessage());
 		} catch (IOException e) {
+			System.out.println("IO Exception");
 			System.err.printf("%s%n",e.getMessage());
-			out.close();
+			System.err.flush();
+			//out.close();
 			throw e;
 		}
 	}
 	
+	/**
+	 * Downloads the plugins jar file to the configuration directory <code>config/plugin.jar</code>
+	 */
 	public void execute(String[] args) {
-		System.err.println("Executing post extract...");
+		System.err.println("Running post extract...");
 		try {
-			readPOM(POM_PATH);
+			readPOM();
 			downloadJAR();
+			System.err.println("Download successful");
 		} catch (XPathExpressionException e) {
 			System.err.printf("%s%n",e.getMessage());
 		} catch (ParserConfigurationException e) {
 			System.err.printf("%s%n",e.getMessage());
 		} catch (SAXException e) {
 			System.err.printf("%s%n",e.getMessage());
+		} catch (FileNotFoundException e) {
+			System.err.printf("%s%n",e.getMessage());
+		} catch (MalformedURLException e) {
+			System.err.printf("%s%n",e.getMessage());
 		} catch (IOException e) {
 			System.err.printf("%s%n",e.getMessage());
 		}
+		// Ensure that the standard error is flushed before exiting.
 		System.err.flush();
-	}
-	
-	public static void main(String [] args) {
-		DownloadPluginJar downloader = new DownloadPluginJar();
-		downloader.execute(args);
 	}
 }
