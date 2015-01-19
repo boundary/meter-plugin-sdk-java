@@ -39,9 +39,13 @@ import javax.xml.xpath.XPathFactory;
 import org.w3c.dom.Document;
 import org.xml.sax.SAXException;
 
-import com.boundary.plugin.sdk.PostInstall;
+import com.boundary.plugin.sdk.PostExtract;
 
-public class DownloadPluginJar implements PostInstall {
+/**
+ * Utility class for downloading a plugin from a release in GitHub
+ *
+ */
+public class DownloadPluginJar implements PostExtract {
 
 	private final static String POM_PATH="pom.xml";
 	private final static String JAR_DESTINATION_PATH="config/plugin.jar";

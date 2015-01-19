@@ -18,7 +18,7 @@ package com.boundary.plugin.sdk;
  * Marker interface for any class that needs to run post install
  *
  */
-public interface PostInstall {
+public interface PostExtract {
 	
 	/**
 	 * Called by the Plugin SDK framework for the plugin to
