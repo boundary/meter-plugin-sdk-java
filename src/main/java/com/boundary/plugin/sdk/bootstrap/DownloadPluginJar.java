@@ -117,19 +117,16 @@ public class DownloadPluginJar implements PostExtract {
 			HttpsURLConnection.setFollowRedirects(true);
 
 			InputStream in = connection.getInputStream();
+			System.err.printf("HTTP Response %d%n",connection.getResponseCode());
 
 			out = new FileOutputStream(new File(JAR_DESTINATION_PATH));
 			byte [] b = new byte[1024];
-			
-			//connection.connect();
-			System.err.printf("Downloading jar of %d bytes from %s...%n",
-					connection.getContentLength(),connection.getURL());
-			System.err.printf("to %s%n",JAR_DESTINATION_PATH);
-			int i = 1;
+
+			System.err.printf("Downloading %s of %d bytes from %s...",
+					JAR_DESTINATION_PATH,connection.getContentLength(),connection.getURL());
+
 			while(in.read(b) != -1) {
-				if (i % 1024 == 0) System.err.print(".");
 				out.write(b);
-				i++;
 			}
 			
 			out.close();
