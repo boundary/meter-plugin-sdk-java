@@ -5,7 +5,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>com.boundary.plugin</groupId>
   <artifactId>java-plugin-sdk</artifactId>
-  <version>1.0.0</version>
+  <version>0.3.0</version>
   <name>Boundary Java Plugin SDK</name>
   <properties>
     <!-- Plugin Versions -->
