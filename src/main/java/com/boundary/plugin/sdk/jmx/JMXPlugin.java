@@ -79,19 +79,6 @@ public class JMXPlugin implements Plugin<JMXPluginConfiguration> {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		
-		try {
-			mbeanMap = mapper.readValue(new File(MBEAN_MAP_PATH), MBeanMap.class);
-		} catch (JsonParseException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (JsonMappingException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
 	}
 
 	@Override
