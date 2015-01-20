@@ -26,5 +26,5 @@ public interface PostExtract {
 	 * @param args Arguments passed to the command
 	 */
 	// TODO, Meter info, platform information, etc
-	public void execute(String[] args);
+	public int execute(String[] args);
 }

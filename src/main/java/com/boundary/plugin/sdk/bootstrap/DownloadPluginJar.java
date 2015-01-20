@@ -131,7 +131,6 @@ public class DownloadPluginJar implements PostExtract {
 			System.out.println("IO Exception");
 			System.err.printf("%s%n",e.getMessage());
 			System.err.flush();
-			//out.close();
 			throw e;
 		}
 	}
@@ -139,12 +138,14 @@ public class DownloadPluginJar implements PostExtract {
 	/**
 	 * Downloads the plugins jar file to the configuration directory <code>config/plugin.jar</code>
 	 */
-	public void execute(String[] args) {
+	public int execute(String[] args) {
+		int result = 1;
 		System.err.println("Running post extract...");
 		try {
 			readPOM();
 			downloadJAR();
 			System.err.println("Download successful");
+			result = 0;
 		} catch (XPathExpressionException e) {
 			System.err.printf("%s%n",e.getMessage());
 		} catch (ParserConfigurationException e) {
@@ -160,10 +161,16 @@ public class DownloadPluginJar implements PostExtract {
 		}
 		// Ensure that the standard error is flushed before exiting.
 		System.err.flush();
+		return result;
 	}
 	
-	public static void main(String [] args) {
+	/**
+	 * Main execution
+	 * @param args Arguments passed on the command line
+	 * @return int
+	 */
+	public static int main(String [] args) {
 		DownloadPluginJar postExtract = new DownloadPluginJar();
-		postExtract.execute(args);
+		return postExtract.execute(args);
 	}
 }
