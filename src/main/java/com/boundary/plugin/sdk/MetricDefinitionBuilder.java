@@ -14,6 +14,9 @@
 
 package com.boundary.plugin.sdk;
 
+/**
+ * Helper class that implements the builder pattern for {@link MetricDefinition}
+ */
 public class MetricDefinitionBuilder {
 
 	private String name;
