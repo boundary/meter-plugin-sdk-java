@@ -51,7 +51,7 @@ public class ExportMBeans {
 	private String commandName;
 	private String prefix;
 	
-	private Options options = new Options();
+	private Options options;
 	private Option exportOption;
 	private Option helpOption;
 	private Option hostOption;
