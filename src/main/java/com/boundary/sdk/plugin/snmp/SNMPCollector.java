@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package com.boundary.plugin.sdk.snmp;
+package com.boundary.sdk.plugin.snmp;
 
 import com.boundary.plugin.sdk.Collector;
 import com.boundary.plugin.sdk.Measurement;
