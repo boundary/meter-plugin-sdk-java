@@ -16,11 +16,13 @@ package com.boundary.plugin.sdk;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.InputStream;
+import java.io.OutputStream;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import com.google.common.io.Files;
 
 public class MoveFile implements PostExtract{
 	
@@ -40,12 +42,35 @@ public class MoveFile implements PostExtract{
 			}
 			File from = new File(args[0]);
 			File to = new File(args[1]);
-			Files.copy(from,to);
+			copy(from,to);
 			result = 0;
 		} catch (Exception e) {
 			LOG.error("%s%n",e.getMessage());
 		}
 		return result;
+	}
+
+	/**
+   * Copies all the bytes from one file to another.
+   *
+   * @param from the source file
+   * @param to the destination file
+   * @throws IOException if an I/O error occurs
+   */
+	private static void copy(File from, File to) throws IOException {
+		
+		InputStream fromStream = new FileInputStream(from);
+		OutputStream toStream = new FileOutputStream(to);
+    	
+	    byte[] buffer = new byte[1024];
+		
+	    int length;
+	    while ((length = fromStream.read(buffer)) > 0){
+	    	toStream.write(buffer, 0, length);
+	    }
+	 
+	    fromStream.close();
+	    toStream.close();
 	}
 	
 	public static void main(String [] args) {
