@@ -25,9 +25,8 @@ import org.junit.Test;
 
 import com.boundary.plugin.sdk.MetricDefinition;
 import com.boundary.plugin.sdk.MetricDefinitionList;
-import com.fasterxml.jackson.core.JsonGenerationException;
-import com.fasterxml.jackson.databind.JsonMappingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
+
+import com.google.gson.Gson;
 
 public class MBeansTransformerTest {
 	
@@ -84,17 +83,8 @@ public class MBeansTransformerTest {
 		transformer.transform();
 		MetricDefinitionList list = transform.getExport();
 
-		ObjectMapper mapper = new ObjectMapper();
-		try {
-			mapper.writeValue(System.out,list);
-		} catch (JsonGenerationException e) {
-			e.printStackTrace();
-		} catch (JsonMappingException e) {
-			e.printStackTrace();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-
+		Gson mapper = new Gson();
+		mapper.toJson(list, System.out);
 	}
 	
 	@Test
@@ -108,20 +98,15 @@ public class MBeansTransformerTest {
 			transformer.transform();
 
 			MBeanMap map = transformer.export();
-
 			for (MBeanEntry entry : map.getMap()) {
 				System.out.println(entry);
 			}
 
-			ObjectMapper mapper = new ObjectMapper();
-			mapper.writeValue(System.out, map);
-			
-		} catch (JsonGenerationException e) {
-			e.printStackTrace();
-		} catch (JsonMappingException e) {
-			e.printStackTrace();
+			Gson gson = new Gson();
+			gson.toJson(map, System.out);
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
+		
 	}
 }

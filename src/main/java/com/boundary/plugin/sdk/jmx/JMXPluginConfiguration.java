@@ -15,13 +15,17 @@
 package com.boundary.plugin.sdk.jmx;
 
 import java.io.File;
+import java.io.FileReader;
+import java.io.FileNotFoundException;
+import java.io.Reader;
+import java.io.StringReader;
+import java.io.BufferedReader;
 import java.io.IOException;
 import java.util.ArrayList;
 
 import com.boundary.plugin.sdk.PluginConfiguration;
-import com.fasterxml.jackson.core.JsonParseException;
-import com.fasterxml.jackson.databind.JsonMappingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.gson.Gson;
+import com.google.gson.JsonParseException;
 
 public class JMXPluginConfiguration implements PluginConfiguration {
 
@@ -47,19 +51,27 @@ public class JMXPluginConfiguration implements PluginConfiguration {
 	public void setPollInterval(int pollInterval) {
 		this.pollInterval = pollInterval;
 	}
-	
+
+	public static JMXPluginConfiguration getConfiguration(final String jsonString) {
+		return getConfiguration(new StringReader(jsonString));
+	}
+
 	public static JMXPluginConfiguration getConfiguration() {
-		ObjectMapper mapper = new ObjectMapper();
 		JMXPluginConfiguration configuration = null;
 		try {
-			configuration = mapper.readValue(new File(PLUGIN_PARAMETER_FILENAME), JMXPluginConfiguration.class);
+			configuration = getConfiguration(new BufferedReader(new FileReader(PLUGIN_PARAMETER_FILENAME)));	
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		}
+		return configuration;
+	}
+	
+	public static JMXPluginConfiguration getConfiguration(Reader reader) {
+		Gson gson = new Gson();
+		JMXPluginConfiguration configuration = null;
+		try {
+			configuration = gson.fromJson(reader, JMXPluginConfiguration.class);
 		} catch (JsonParseException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (JsonMappingException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}

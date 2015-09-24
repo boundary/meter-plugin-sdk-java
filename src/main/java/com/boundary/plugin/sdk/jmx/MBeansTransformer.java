@@ -26,9 +26,7 @@ import javax.management.MBeanInfo;
 import javax.management.MBeanServerConnection;
 import javax.management.ObjectName;
 
-import com.fasterxml.jackson.core.JsonGenerationException;
-import com.fasterxml.jackson.databind.JsonMappingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.gson.Gson;
 
 public class MBeansTransformer<E> {
 	
@@ -93,16 +91,8 @@ public class MBeansTransformer<E> {
 	
 	public void convertToJson() {
 
-		ObjectMapper mapper = new ObjectMapper();
-		try {
-			mapper.writeValue(System.out,this.export());
-		} catch (JsonGenerationException e) {
-			e.printStackTrace();
-		} catch (JsonMappingException e) {
-			e.printStackTrace();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
+		Gson gson = new Gson();
+		System.out.print(gson.toJson(this.export()));
 	}
 	
 	public E export() {

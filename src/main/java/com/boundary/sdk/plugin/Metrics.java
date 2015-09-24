@@ -15,11 +15,8 @@ package com.boundary.sdk.plugin;
 
 import java.util.List;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
-
 public class Metrics {
 	
-	@JsonProperty
 	List<String> metrics;
 	
 	public Metrics() {
