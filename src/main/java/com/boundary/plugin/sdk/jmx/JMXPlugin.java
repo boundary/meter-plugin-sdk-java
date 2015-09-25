@@ -14,6 +14,8 @@
 package com.boundary.plugin.sdk.jmx;
 
 import java.io.File;
+import java.io.FileReader;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
 
@@ -24,9 +26,8 @@ import com.boundary.plugin.sdk.CollectorDispatcher;
 import com.boundary.plugin.sdk.MeasurementSink;
 import com.boundary.plugin.sdk.Plugin;
 import com.boundary.plugin.sdk.jmx.extractor.AttributeValueExtractor;
-import com.fasterxml.jackson.core.JsonParseException;
-import com.fasterxml.jackson.databind.JsonMappingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.gson.Gson;
+import com.google.gson.JsonParseException;
 
 public class JMXPlugin implements Plugin<JMXPluginConfiguration> {
 	
@@ -53,26 +54,17 @@ public class JMXPlugin implements Plugin<JMXPluginConfiguration> {
 	}
 
 	public void loadConfiguration() {
-		ObjectMapper mapper = new ObjectMapper();
 		try {
-			JMXPluginConfiguration configuration = mapper.readValue(new File(PLUGIN_PARAM_PATH), JMXPluginConfiguration.class);
+			JMXPluginConfiguration configuration = JMXPluginConfiguration.getConfiguration(new FileReader(PLUGIN_PARAM_PATH));
 			setConfiguration(configuration);
-		} catch (JsonParseException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (JsonMappingException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
+		} catch (FileNotFoundException e) {
 			e.printStackTrace();
 		}
+
 		try {
-			mbeanMap = mapper.readValue(new File(MBEAN_MAP_PATH), MBeanMap.class);
+			Gson gson = new Gson();
+			mbeanMap = gson.fromJson(new FileReader(MBEAN_MAP_PATH), MBeanMap.class);
 		} catch (JsonParseException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (JsonMappingException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} catch (IOException e) {

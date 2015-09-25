@@ -15,8 +15,6 @@ package com.boundary.plugin.sdk;
 
 import java.io.Serializable;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
-
 /**
  * Defines a Boundary Metric
  * 
@@ -26,21 +24,13 @@ public class MetricDefinition implements Serializable {
 	
 	private static final long serialVersionUID = -3245328652144720304L;
 	
-	@JsonProperty
 	protected String name;
-	@JsonProperty
 	protected String displayName;
-	@JsonProperty
 	protected String displayNameShort;
-	@JsonProperty
 	protected String description;
-	@JsonProperty
 	protected long defaultResolutionMS;
-	@JsonProperty
 	protected MetricAggregate defaultAggregate;
-	@JsonProperty
 	protected MetricUnit unit;
-	@JsonProperty
 	protected boolean isDisabled;
 	
 	/**
