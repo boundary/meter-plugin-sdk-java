@@ -137,7 +137,7 @@ public class JMXCollector implements Collector {
 			builder.setName(attr.getMetricName())
 			       .setSource(this.source)
 				   .setValue(value)
-				   .setTimestamp(new Date());
+				   .setTimestamp(null);
 			Measurement m = builder.build();
 			
 			// Sends to configured {@link MeasureWriter}
