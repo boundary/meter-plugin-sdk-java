@@ -41,23 +41,23 @@ public class AttributeValueExtractor {
 		String type = attr.getDataType();
         switch (type) {
         case "int":
-            value = (int) obj;
+            value = ((int) obj) * attr.getScale();
             break;
         case "long":
-            value = (long) obj;
+            value = ((long) obj) * attr.getScale();
             break;
         case "double":
-            value = (double) obj;
+            value = ((double) obj) * attr.getScale();
             break;
         case "float":
-            value = (float) obj;
+            value = ((float) obj) * attr.getScale();
             break;
         case "java.lang.Object":
-            value = (double) obj;
+            value = ((double) obj) * attr.getScale();
             break;
         case "javax.management.openmbean.CompositeData":
             CompositeDataSupport cData = (CompositeDataSupport)obj;
-            value = (long) cData.get(attr.getKey());
+            value = ((long) cData.get(attr.getKey())) * attr.getScale();
             break;
         default:
         	LOG.error("Unknown Type");
