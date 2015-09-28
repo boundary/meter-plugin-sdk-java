@@ -130,9 +130,7 @@ public class JMXCollector implements Collector {
 					instance.getObjectName(), attr.getAttribute(),
 					attr.getDataType());
 			Object obj = connection.getAttribute(instance.getObjectName(),attr.getAttribute());
-            
-			System.out.println(String.format("metric: %s, object class: %s, value: %s",
-					attr.getMetricName(), obj.getClass(), obj));
+
 			LOG.debug("metric: {}, object class: {}, value: {}",
 					attr.getMetricName(), obj.getClass(), obj);
 			Number value = valueExtractor.getValue(obj,attr);
