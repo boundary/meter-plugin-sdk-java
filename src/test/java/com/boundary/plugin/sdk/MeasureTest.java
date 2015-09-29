@@ -99,4 +99,18 @@ public class MeasureTest {
 		assertFields(NAME,VALUE,SOURCE,TIMESTAMP,m);
 	}
 
+	@Test
+	public void testFormattingWithNullTimestamp() {
+		Measurement m = new Measurement(NAME, VALUE, SOURCE, null);
+		final String output = String.format("%s %s %s", NAME, VALUE, SOURCE);
+		assertEquals(output, m.toString());
+	}
+
+	@Test
+	public void testFormattinThatRounds() {
+		Measurement m = new Measurement(NAME, 1234.56789, SOURCE, null);
+		final String output = "foobar 1234.5679 some-machine.somewhere.com";
+		assertEquals(output, m.toString());
+	}
+
 }

@@ -15,6 +15,7 @@
 package com.boundary.plugin.sdk;
 
 import java.util.Date;
+import java.text.*;
 
 /**
  * Encapsulates the data required for a single piece of time series data to be communicated to the Plugin manager
@@ -70,7 +71,6 @@ public class Measurement {
 		checkNotNull(name);
 		checkNotNull(value);
 		checkNotNull(source);
-		checkNotNull(timestamp);
 		this.name = name;
 		this.value = value;
 		this.source = source;
@@ -81,10 +81,11 @@ public class Measurement {
 	 * Converts the instance to an output string suitable for sending to the meter plugin manager.
 	 */
 	public String toString() {
+        NumberFormat formatter = new DecimalFormat("#.####");
 		StringBuffer buf = new StringBuffer();
 		buf.append(name);
 		buf.append(" ");
-		buf.append(value);
+		buf.append(formatter.format(value));
 		if (source != null) {
 			buf.append(" ");
 			buf.append(source);
@@ -149,7 +150,12 @@ public class Measurement {
 	 * @param timestamp {@link Date}
 	 */
 	private void setTimestamp(Date timestamp) {
-		this.timestamp = (Date)timestamp.clone();
+		if (timestamp != null) {
+			this.timestamp = (Date)timestamp.clone();	
+		} else {
+			timestamp = null;
+		}
+		
 	}
 
 	/**

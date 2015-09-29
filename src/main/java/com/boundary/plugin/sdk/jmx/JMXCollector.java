@@ -130,6 +130,7 @@ public class JMXCollector implements Collector {
 					instance.getObjectName(), attr.getAttribute(),
 					attr.getDataType());
 			Object obj = connection.getAttribute(instance.getObjectName(),attr.getAttribute());
+
 			LOG.debug("metric: {}, object class: {}, value: {}",
 					attr.getMetricName(), obj.getClass(), obj);
 			Number value = valueExtractor.getValue(obj,attr);
@@ -137,7 +138,7 @@ public class JMXCollector implements Collector {
 			builder.setName(attr.getMetricName())
 			       .setSource(this.source)
 				   .setValue(value)
-				   .setTimestamp(new Date());
+				   .setTimestamp(null);
 			Measurement m = builder.build();
 			
 			// Sends to configured {@link MeasureWriter}
@@ -266,7 +267,10 @@ public class JMXCollector implements Collector {
 				long stop = new Date().getTime();
 				long delta = stop - start;
 				delta = delta < 0 ? 0 : delta;
-				Thread.sleep(Long.parseLong(item.getPollInterval()) - delta);
+				long timeToSleep = Long.parseLong(item.getPollInterval()) - delta;
+				if (timeToSleep > 0) {
+					Thread.sleep(timeToSleep);	
+				}
 			} catch(IOException i) {
 				LOG.debug("Collector {}, Received IOException: {}",this.getName(),i.getMessage());
 				LOG.warn("Collector {}, Received IOException: {}",this.getName());
