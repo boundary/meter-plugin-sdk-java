@@ -1,4 +1,4 @@
-// Copyright 2014-2015 Boundary, Inc.
+// Copyright 2015 BMC Software, Inc.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -14,6 +14,7 @@
 
 package com.boundary.plugin.sdk;
 
-public class ParamSchema {
+public interface EventSink {
 
+    public void emit(Event event);
 }

@@ -23,7 +23,7 @@ public class PluginJSON {
     String version;
     String meterVersionRequired;
     List<String> unsupportedPlatforms;
-    List<String> tags;
+    String tags;
 	String description;
 	String icon;
 	String command;
@@ -35,7 +35,7 @@ public class PluginJSON {
 	String ignore;
 	
 	ParamArray paramArray;
-	ParamSchema paramSchema;
+	List<ParamSchemaItem> paramSchema;
 
     public String getName() {
         return name;
@@ -53,7 +53,7 @@ public class PluginJSON {
         return unsupportedPlatforms;
     }
 
-    public List<String> getTags() {
+    public String getTags() {
         return tags;
     }
 
@@ -81,7 +81,7 @@ public class PluginJSON {
 	public ParamArray getParamArray() {
 		return paramArray;
 	}
-	public ParamSchema getParamSchema() {
+	public List<ParamSchemaItem> getParamSchema() {
 		return paramSchema;
 	}
 	

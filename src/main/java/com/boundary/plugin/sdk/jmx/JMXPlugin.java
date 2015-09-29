@@ -24,7 +24,9 @@ import org.slf4j.LoggerFactory;
 
 import com.boundary.plugin.sdk.CollectorDispatcher;
 import com.boundary.plugin.sdk.MeasurementSink;
+import com.boundary.plugin.sdk.EventSink;
 import com.boundary.plugin.sdk.Plugin;
+import com.boundary.plugin.sdk.PluginJSON;
 import com.boundary.plugin.sdk.jmx.extractor.AttributeValueExtractor;
 import com.google.gson.Gson;
 import com.google.gson.JsonParseException;
@@ -36,9 +38,12 @@ public class JMXPlugin implements Plugin<JMXPluginConfiguration> {
 	private JMXPluginConfiguration configuration;
 	private CollectorDispatcher dispatcher;
 	private MeasurementSink output;
+    private EventSink eventOutput;
 	private MBeanMap mbeanMap;
+    private PluginJSON manifest;
 	private AttributeValueExtractor valueExtractor;
 	private final String MBEAN_MAP_PATH="config/mbeans.json";
+    private final String PLUGIN_MANIFEST_PATH="plugin.json";
 	private final String PLUGIN_PARAM_PATH="param.json";
 	
 	@Override
@@ -47,6 +52,16 @@ public class JMXPlugin implements Plugin<JMXPluginConfiguration> {
 		this.output = output;
 		this.valueExtractor = new AttributeValueExtractor();
 	}
+
+    @Override
+    public void setEventOutput(EventSink output) {
+        LOG.info("setting eventoutput");
+        this.eventOutput = output;
+    }
+
+    public PluginJSON getManifest() {
+        return this.manifest;
+    }
 
 	@Override
 	public void setConfiguration(JMXPluginConfiguration configuration) {
@@ -71,6 +86,15 @@ public class JMXPlugin implements Plugin<JMXPluginConfiguration> {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+
+        try {
+            Gson gson = new Gson();
+            manifest = gson.fromJson(new FileReader(PLUGIN_MANIFEST_PATH), PluginJSON.class);
+        } catch (JsonParseException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
 	}
 
 	@Override
@@ -82,7 +106,7 @@ public class JMXPlugin implements Plugin<JMXPluginConfiguration> {
 	public void run() {
 		ArrayList<JMXPluginConfigurationItem> items = configuration.getItems();
 		for(JMXPluginConfigurationItem i : items) {
-			dispatcher.addCollector(new JMXCollector(i.getName(),i,mbeanMap,valueExtractor,output));
+			dispatcher.addCollector(new JMXCollector(this, i.getName(),i,mbeanMap,valueExtractor,output,eventOutput));
 		}
 		dispatcher.run();
 	}
