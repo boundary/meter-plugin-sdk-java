@@ -1,4 +1,4 @@
-// Copyright 2014-2015 Boundary, Inc.
+// Copyright 2015 BMC Software, Inc.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -12,18 +12,6 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 // Copyright 2014 Boundary, Inc.
-//
-// Licensed under the Apache License, Version 2.0 (the "License");
-// you may not use this file except in compliance with the License.
-// You may obtain a copy of the License at
-//
-//     http://www.apache.org/licenses/LICENSE-2.0
-//
-// Unless required by applicable law or agreed to in writing, software
-// distributed under the License is distributed on an "AS IS" BASIS,
-// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-// See the License for the specific language governing permissions and
-// limitations under the License.
 
 package com.boundary.plugin.sdk.jmx;
 
@@ -51,6 +39,11 @@ import com.boundary.plugin.sdk.Collector;
 import com.boundary.plugin.sdk.Measurement;
 import com.boundary.plugin.sdk.MeasurementBuilder;
 import com.boundary.plugin.sdk.MeasurementSink;
+import com.boundary.plugin.sdk.PluginJSON;
+import com.boundary.plugin.sdk.EventSink;
+import com.boundary.plugin.sdk.Event.EventSeverity;
+import com.boundary.plugin.sdk.EventBuilder;
+import com.boundary.plugin.sdk.Event;
 import com.boundary.plugin.sdk.PluginUtil;
 import com.boundary.plugin.sdk.jmx.extractor.AttributeValueExtractor;
 
@@ -92,23 +85,28 @@ public class JMXCollector implements Collector {
 
 	private JMXClient client;
 	private JMXPluginConfigurationItem item;
+    private JMXPlugin plugin;
 	private MBeanMap mbeanMap;
 	private MeasurementSink output;
+    private EventSink eventOutput;
 	private String name;
 	private AttributeValueExtractor valueExtractor;
 	private String source;
 	private MBeanServerConnection mbeanServerConnection;
 
-	public JMXCollector(String name,
+	public JMXCollector(JMXPlugin plugin, String name,
 			JMXPluginConfigurationItem item,
 			MBeanMap mbeanMap,
 			AttributeValueExtractor valueExtractor,
-			MeasurementSink output) {
+			MeasurementSink output,
+            EventSink eventOutput) {
+        this.plugin = plugin;
 		this.name = name;
 		this.client = new JMXClient();
 		this.item = item;
 		this.mbeanMap = mbeanMap;
 		this.output = output;
+        this.eventOutput = eventOutput;
 		this.valueExtractor = valueExtractor;
 		this.state = CollectorState.INITIALIZING;
 	}
@@ -206,6 +204,26 @@ public class JMXCollector implements Collector {
 		}
 		return CollectorState.CONNECTING;
 	}
+
+    private EventBuilder getEventBuilder() {
+        EventBuilder builder = new EventBuilder();
+        final PluginJSON manifest = plugin.getManifest();
+        builder.setTitle(String.format("Plugin %s version %s", manifest.getName(), manifest.getVersion()));
+        builder.setSource(this.source);
+        builder.setHost(PluginUtil.getHostname());
+        return builder;
+    }
+
+    private void emitErrorEvent(final String message) {
+        emitEvent(EventSeverity.ERROR, message);
+    }
+
+    private void emitEvent(final EventSeverity severity, final String message) {
+        EventBuilder builder = getEventBuilder();
+        builder.setSeverity(severity);
+        builder.setMessage(message);
+        eventOutput.emit(builder.build());
+    }
 	
 	private CollectorState stateConnecting() {
 		CollectorState nextState = CollectorState.CONNECTING;
@@ -224,17 +242,22 @@ public class JMXCollector implements Collector {
 					break;
 				}
 			} catch(UnknownHostException e) {
-				LOG.error("Collector: {}, Unknown host: {}, port: {}",
+                final String message = String.format("Collector %s, Unknown host %s, port %d",
 						this.getName(), item.getHost(), item.getPort());
-			} catch(NoRouteToHostException e) {
-				LOG.error("Collector: {}, No route to host: {}, port: {}",
-						this.getName(), item.getHost(), item.getPort());
+				LOG.error(message);
+                emitErrorEvent(message);
+    		} catch(NoRouteToHostException e) {
+                final String message = String.format("Collector %s, No route to host %s, port %d", this.getName(), item.getHost(), item.getPort());
+                LOG.error(message);
+                emitErrorEvent(message);
 			} catch(ConnectException e) {
-				LOG.error("Collector: {}, Failed to connect MBeanServer at host: {}, port: {}",
-						this.getName(), item.getHost(), item.getPort());
+                final String message = String.format("Collector %s, Failed to connect MBeanServer at host %s, port %d", this.getName(), item.getHost(), item.getPort());
+                LOG.error(message);
+                emitErrorEvent(message);
 			} catch(IOException e) {
-				LOG.error("Collector: {}, Failed to connect MBeanServer at host: {}, port: {}",
-						this.getName(), item.getHost(), item.getPort());
+				final String message = String.format("Collector %s, Failed to connect MBeanServer at host %s, port %d", this.getName(), item.getHost(), item.getPort());
+                LOG.error(message);
+                emitErrorEvent(message);
 			}
 			try {
 				Thread.sleep(10000);

@@ -19,7 +19,11 @@ import java.util.List;
  * Data structure the encapsulates the <code>plugin.json</code> plugin manifest.
  */
 public class PluginJSON {
-	
+    String name;
+    String version;
+    String meterVersionRequired;
+    List<String> unsupportedPlatforms;
+    String tags;
 	String description;
 	String icon;
 	String command;
@@ -31,8 +35,28 @@ public class PluginJSON {
 	String ignore;
 	
 	ParamArray paramArray;
-	ParamSchema paramSchema;
-	
+	List<ParamSchemaItem> paramSchema;
+
+    public String getName() {
+        return name;
+    }
+
+    public String getVersion() {
+        return version;
+    }
+
+    public String getMeterVersionRequired() {
+        return meterVersionRequired;
+    }
+
+    public List<String> getUnsupportedPlatforms() {
+        return unsupportedPlatforms;
+    }
+
+    public String getTags() {
+        return tags;
+    }
+
 	public String getDescription() {
 		return description;
 	}
@@ -57,7 +81,7 @@ public class PluginJSON {
 	public ParamArray getParamArray() {
 		return paramArray;
 	}
-	public ParamSchema getParamSchema() {
+	public List<ParamSchemaItem> getParamSchema() {
 		return paramSchema;
 	}
 	

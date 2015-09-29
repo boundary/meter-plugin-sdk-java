@@ -48,6 +48,7 @@ public class PluginRunner {
 			plugin.setDispatcher(dispatcher);
 			plugin.loadConfiguration();
 			plugin.setMeasureOutput(MeasurementSinkFactory.getInstance(Type.STDOUT));
+            plugin.setEventOutput(new EventSinkStandardOutput());
 			plugin.run();
 		} catch (Exception e) {
 			e.printStackTrace();

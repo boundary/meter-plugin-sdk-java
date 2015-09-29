@@ -21,6 +21,8 @@ import java.util.ArrayList;
 
 import com.boundary.plugin.sdk.MeasurementSink;
 import com.boundary.plugin.sdk.MeasurementSinkStandardOut;
+import com.boundary.plugin.sdk.EventSink;
+import com.boundary.plugin.sdk.EventSinkStandardOutput;
 import com.boundary.plugin.sdk.Plugin;
 import com.boundary.plugin.sdk.CollectorDispatcher;
 import com.boundary.plugin.sdk.PluginRunner;
@@ -32,13 +34,20 @@ public class SimplePlugin implements Plugin<SimplePluginConfiguration> {
 	SimplePluginConfiguration configuration;
 	CollectorDispatcher dispatcher;
 	MeasurementSink output;
+    EventSink eventOutput;
 
 	@Override
 	public void setConfiguration(SimplePluginConfiguration configuration) {
 		this.configuration = configuration;
 		this.output = new MeasurementSinkStandardOut();
+        this.eventOutput = new EventSinkStandardOutput();
 		output.getClass();
 	}
+
+    @Override
+    public void setEventOutput(final EventSink output) {
+        this.eventOutput = output;
+    }
 	
 	@Override
 	public void loadConfiguration() {

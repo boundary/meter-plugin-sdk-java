@@ -21,6 +21,8 @@ package com.boundary.plugin.sdk;
 public interface Plugin <T> {
 	
 	public void setMeasureOutput(MeasurementSink output);
+
+    public void setEventOutput(EventSink output);
 	
 	/**
 	 * Provides a configuration instance for the plugin
