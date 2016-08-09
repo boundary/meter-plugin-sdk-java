@@ -231,7 +231,12 @@ public class JMXCollector implements Collector {
 		// Loop trying to establish a connection to the MBean server
 		while (nextState == CollectorState.CONNECTING) {
 			try {
-				client.connect(item.getHost(), item.getPort());
+				if(item.getUser() != null && item.getPassword() != null){
+					client.connect(item.getHost(), item.getPort(), item.getUser(), item.getPassword());
+				}
+				else {
+					client.connect(item.getHost(), item.getPort());
+				}
 				this.mbeanServerConnection = client.getMBeanServerConnection();
 				if (this.mbeanServerConnection == null) {
 					LOG.error("Collector: {}, MBean Server Connection is null for {}",
