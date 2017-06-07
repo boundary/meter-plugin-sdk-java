@@ -11,7 +11,6 @@
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
 // limitations under the License.
-
 package com.boundary.plugin.sdk;
 
 import java.lang.StringBuffer;
@@ -28,13 +27,13 @@ public class EventFormatter {
         for (String tag : tags) {
             sb.append(tag);
             sb.append(',');
-        } 
+        }
         String output = sb.toString();
-        return output.substring(0, output.length()-1);
+        return output.substring(0, output.length() - 1);
     }
 
     public String formatSeverity(EventSeverity severity) {
-        switch(severity) {
+        switch (severity) {
             case INFO:
                 return "info";
             case WARN:
@@ -51,7 +50,7 @@ public class EventFormatter {
     private boolean isNullOrEmpty(String string) {
         return string == null || string.isEmpty();
     }
-    
+
     public String format(Event event) {
 
         final StringBuffer sb = new StringBuffer("_bevent:");
@@ -59,7 +58,7 @@ public class EventFormatter {
         if (!isNullOrEmpty(event.getTitle())) {
             sb.append(event.getTitle());
         }
-        
+
         if (!isNullOrEmpty(event.getMessage())) {
             sb.append("|m:");
             sb.append(event.getMessage());
@@ -86,4 +85,37 @@ public class EventFormatter {
         return sb.toString();
     }
 
+    public String rpcFormat(Event event) {
+
+        final StringBuffer sb = new StringBuffer("{\"jsonrpc\":\"2.0\",\"method\":\"event\",\"params\":{\"data\":\"_bevent:");
+
+        if (!isNullOrEmpty(event.getTitle())) {
+            sb.append(event.getTitle());
+        }
+
+        if (!isNullOrEmpty(event.getMessage())) {
+            sb.append("|m:");
+            sb.append(event.getMessage());
+        }
+
+        sb.append("|t:");
+        sb.append(formatSeverity(event.getSeverity()));
+
+        if (!isNullOrEmpty(event.getHost())) {
+            sb.append("|h:");
+            sb.append(event.getHost());
+        }
+
+        if (!isNullOrEmpty(event.getSource())) {
+            sb.append("|s:");
+            sb.append(event.getSource());
+        }
+
+        if (event.hasTags()) {
+            sb.append("|tags:");
+            sb.append(formatTags(event.getTags()));
+        }
+        sb.append("\"}}");
+        return sb.toString();
+    }
 }

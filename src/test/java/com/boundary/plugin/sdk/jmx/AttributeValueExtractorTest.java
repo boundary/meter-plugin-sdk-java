@@ -11,11 +11,7 @@
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
 // limitations under the License.
-
 package com.boundary.plugin.sdk.jmx;
-
-import java.io.IOException;
-import java.util.ArrayList;
 
 import org.junit.After;
 import org.junit.AfterClass;
@@ -24,42 +20,42 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 
 import com.boundary.plugin.sdk.jmx.extractor.AttributeValueExtractor;
-import com.boundary.plugin.sdk.jmx.MBeanAttribute;
+import static org.junit.Assert.assertEquals;
 
 public class AttributeValueExtractorTest {
-	
-	@BeforeClass
-	public static void setUpBeforeClass() throws Exception {
-	}
 
-	@AfterClass
-	public static void tearDownAfterClass() throws Exception {
-	}
+    @BeforeClass
+    public static void setUpBeforeClass() throws Exception {
+    }
 
-	@Before
-	public void setUp() throws Exception {
-	}
+    @AfterClass
+    public static void tearDownAfterClass() throws Exception {
+    }
 
-	@After
-	public void tearDown() throws Exception {
+    @Before
+    public void setUp() throws Exception {
+    }
 
-	}
+    @After
+    public void tearDown() throws Exception {
 
-	@Test
-	public void testValueDefaultScaling() {
-		AttributeValueExtractor valueExtractor = new AttributeValueExtractor();
-		int value = 2;
-		MBeanAttribute attr = new MBeanAttribute();
-		assertEquals(new Integer(2), valueExtractor.getValue(value, attr));
-	}
+    }
 
-	@Test
-	public void testValueCustomScaling() {
-		AttributeValueExtractor valueExtractor = new AttributeValueExtractor();
-		Number value = 2;
-		MBeanAttribute attr = new MBeanAttribute();
-		attr.setScale(3);
-		assertEquals(new Integer(6), valueExtractor.getValue(value, attr));
-	}
+    @Test
+    public void testValueDefaultScaling() {
+        AttributeValueExtractor valueExtractor = new AttributeValueExtractor();
+        int value = 2;
+        MBeanAttribute attr = new MBeanAttribute();
+        assertEquals(new Integer(2), valueExtractor.getValue(value, attr));
+    }
+
+    @Test
+    public void testValueCustomScaling() {
+        AttributeValueExtractor valueExtractor = new AttributeValueExtractor();
+        Number value = 2;
+        MBeanAttribute attr = new MBeanAttribute();
+        attr.setScale(3);
+        assertEquals(new Integer(6), valueExtractor.getValue(value, attr));
+    }
 
 }

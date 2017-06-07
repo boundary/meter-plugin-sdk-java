@@ -11,22 +11,24 @@
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
 // limitations under the License.
-
 package com.boundary.plugin.sdk;
-
-import com.boundary.plugin.sdk.EventSink;
-import com.boundary.plugin.sdk.EventFormatter;
 
 public class EventSinkStandardOutput implements EventSink {
 
     private EventFormatter formatter;
 
-    public EventSinkStandardOutput () {
+    public EventSinkStandardOutput() {
         formatter = new EventFormatter();
     }
 
+    @Override
     public void emit(Event event) {
         System.out.println(formatter.format(event));
+    }
+
+    @Override
+    public void emit(final String event) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
 }

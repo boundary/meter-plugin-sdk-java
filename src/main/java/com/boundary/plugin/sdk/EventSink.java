@@ -17,4 +17,5 @@ package com.boundary.plugin.sdk;
 public interface EventSink {
 
     public void emit(Event event);
+    public void emit(final String event);
 }
