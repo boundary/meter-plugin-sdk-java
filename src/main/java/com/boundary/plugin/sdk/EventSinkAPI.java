@@ -25,7 +25,7 @@ public class EventSinkAPI implements EventSink {
 
     @Override
     public void emit(Event event) {
-        RPC.send(formatter.format(event));
+        emit(formatter.format(event));
     }
 
     @Override
