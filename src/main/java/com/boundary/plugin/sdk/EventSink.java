@@ -23,8 +23,8 @@ public interface EventSink {
 
     public int emit(final List<String> event);
 
-    public boolean openRPCConnection();
+    public boolean openConnection();
 
-    public boolean closeRPCConnection();
+    public boolean closeConnection();
 
 }

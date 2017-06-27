@@ -43,12 +43,12 @@ public class EventSinkAPI implements EventSink {
     }
 
     @Override
-    public boolean openRPCConnection() {
+    public boolean openConnection() {
         return rpc.openConnection();
     }
 
     @Override
-    public boolean closeRPCConnection() {
+    public boolean closeConnection() {
         return rpc.closeConnection();
     }
 }

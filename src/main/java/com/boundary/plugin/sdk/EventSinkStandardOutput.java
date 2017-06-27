@@ -39,12 +39,12 @@ public class EventSinkStandardOutput implements EventSink {
     }
 
     @Override
-    public boolean openRPCConnection() {
+    public boolean openConnection() {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
     @Override
-    public boolean closeRPCConnection() {
+    public boolean closeConnection() {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
