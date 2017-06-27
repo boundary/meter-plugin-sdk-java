@@ -11,7 +11,6 @@
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
 // limitations under the License.
-
 package com.boundary.plugin.sdk;
 
 import java.util.List;
@@ -19,6 +18,13 @@ import java.util.List;
 public interface EventSink {
 
     public void emit(Event event);
+
     public void emit(final String event);
+
     public int emit(final List<String> event);
+
+    public boolean openRPCConnection();
+
+    public boolean closeRPCConnection();
+
 }

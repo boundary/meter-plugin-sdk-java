@@ -20,24 +20,35 @@ import com.boundary.plugin.sdk.rpc.RPC;
 public class EventSinkAPI implements EventSink {
 
     private final EventFormatter formatter;
-    //private RPC rpc;
+    private RPC rpc;
 
     public EventSinkAPI() {
         formatter = new EventFormatter();
+        rpc = RPC.getInstance();
     }
 
     @Override
     public void emit(Event event) {
-    	RPC.send(formatter.format(event));
+        rpc.send(formatter.format(event));
     }
 
     @Override
     public void emit(String event) {
-    	RPC.send(event);
+        rpc.send(event);
     }
-    
+
     @Override
     public int emit(List<String> eventList) {
-    	return RPC.sendList(eventList);
+        return rpc.sendList(eventList);
+    }
+
+    @Override
+    public boolean openRPCConnection() {
+        return rpc.openConnection();
+    }
+
+    @Override
+    public boolean closeRPCConnection() {
+        return rpc.closeConnection();
     }
 }

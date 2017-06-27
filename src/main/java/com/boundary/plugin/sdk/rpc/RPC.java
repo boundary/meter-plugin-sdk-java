@@ -3,6 +3,7 @@ package com.boundary.plugin.sdk.rpc;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.net.Socket;
+import java.net.UnknownHostException;
 import java.util.List;
 
 import org.slf4j.LoggerFactory;
@@ -15,72 +16,86 @@ import org.slf4j.LoggerFactory;
 public class RPC {
 
     private static final org.slf4j.Logger LOG = LoggerFactory.getLogger(RPC.class);
-    
+
     final static String HOSTNAME = "localhost";
     final static int PORTNUMBER = 9192;
+    private static RPC rpc = new RPC();
+    private Socket socket;
+    private DataOutputStream dataOutputStream;
 
-    public static void send(final String content) {
-        Socket socket = null;
-        DataOutputStream dataOutputStream = null;
-        try {
-            socket = new Socket(HOSTNAME, PORTNUMBER);
-            dataOutputStream = new DataOutputStream(socket.getOutputStream());
-            dataOutputStream.writeBytes(content);
-            dataOutputStream.flush();
+    private RPC() {
+        super();
+    }
+
+    public static RPC getInstance() {
+        if (rpc == null) {
+            rpc = new RPC();
+        }
+        return rpc;
+    }
+
+    public boolean openConnection() {
+        if (this.socket == null) {
             try {
-                dataOutputStream.close();
-                socket.close();
-            } catch (IOException ex) {
-                LOG.error("Exception occured while closing the socket output stream", ex);
+                this.socket = new Socket(HOSTNAME, PORTNUMBER);
+                this.dataOutputStream = new DataOutputStream(socket.getOutputStream());;
+                //socket.setKeepAlive(true);
+                return true;
+            } catch (UnknownHostException e) {
+                LOG.error("Unable to open socket connection to host", e);
+            } catch (IOException e) {
+                LOG.error("Unable to open Socket Connection", e);
+            }
+        }
+        return false;
+    }
+
+    public void send(final String content) {
+        try {
+            if (socket != null) {
+                dataOutputStream.writeBytes(content);
+                dataOutputStream.flush();
+            } else {
+                LOG.error("Unable to write the events, Socket connection is not open");
             }
         } catch (IOException ex) {
             LOG.error("Exception occured while sending content to meter", ex);
-        } finally {
-            try {
-                if (dataOutputStream != null) {
-                    dataOutputStream.close();
-                }
-                if (socket != null) {
-                    socket.close();
-                }
-            } catch (IOException ex) {
-                LOG.error("Exception occured while closing the socket output stream", ex);
-            }
         }
     }
 
-    public static int sendList(final List<String> contentList) {
-        Socket socket = null;
-        DataOutputStream dataOutputStream = null;
+    public int sendList(final List<String> contentList) {
         int totalRecordsWritten = 0;
         try {
-            socket = new Socket(HOSTNAME, PORTNUMBER);
-            dataOutputStream = new DataOutputStream(socket.getOutputStream());
-            for (String content : contentList) {
-                dataOutputStream.writeBytes(content);
-                totalRecordsWritten++;
-            }
-            dataOutputStream.flush();
-            try {
-                dataOutputStream.close();
-                socket.close();
-            } catch (IOException ex) {
-                LOG.error("Exception occured while closing the socket output stream", ex);
+            if (socket != null && dataOutputStream != null) {
+                for (String content : contentList) {
+                    dataOutputStream.writeBytes(content);
+                    totalRecordsWritten++;
+                }
+                dataOutputStream.flush();
+            } else {
+                LOG.error("Unable to write the events, Socket connection is not open");
             }
         } catch (IOException ex) {
             LOG.error("Exception occured while sending content to meter", ex);
-        } finally {
-            try {
-                if (dataOutputStream != null) {
-                    dataOutputStream.close();
-                }
-                if (socket != null) {
-                    socket.close();
-                }
-            } catch (IOException ex) {
-                LOG.error("Exception occured while closing the socket output stream", ex);
-            }
         }
         return totalRecordsWritten;
     }
+
+    public boolean closeConnection() {
+
+        try {
+            if (socket != null) {
+                socket.close();
+            }
+            if (dataOutputStream != null) {
+                dataOutputStream.close();
+            }
+            return true;
+        } catch (IOException e) {
+            LOG.error("Unable to close Socket Connection", e);
+        }
+
+        return false;
+    }
+
 }

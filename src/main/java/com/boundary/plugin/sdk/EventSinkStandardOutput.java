@@ -30,12 +30,22 @@ public class EventSinkStandardOutput implements EventSink {
 
     @Override
     public void emit(final String event) {
-        throw new UnsupportedOperationException("Not supported yet."); 
+        throw new UnsupportedOperationException("Not supported yet.");
     }
 
-	@Override
-	public int emit(List<String> event) {
-		throw new UnsupportedOperationException("Not supported yet."); 
-	}
+    @Override
+    public int emit(List<String> event) {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    @Override
+    public boolean openRPCConnection() {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    @Override
+    public boolean closeRPCConnection() {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
 
 }
