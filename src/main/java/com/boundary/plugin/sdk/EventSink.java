@@ -14,7 +14,11 @@
 
 package com.boundary.plugin.sdk;
 
+import java.util.List;
+
 public interface EventSink {
 
     public void emit(Event event);
+    public void emit(final String event);
+    public int emit(final List<String> event);
 }
