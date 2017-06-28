@@ -11,17 +11,44 @@
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
 // limitations under the License.
-
 package com.boundary.plugin.sdk;
 
-public class EventSinkAPI implements EventSink {
-   
-    public EventSinkAPI() {
+import java.util.List;
 
+import com.boundary.plugin.sdk.rpc.RPC;
+
+public class EventSinkAPI implements EventSink {
+
+    private final EventFormatter formatter;
+    private RPC rpc;
+
+    public EventSinkAPI() {
+        formatter = new EventFormatter();
+        rpc = RPC.getInstance();
     }
 
+    @Override
     public void emit(Event event) {
-        // TODO: Implement this.
+        rpc.send(formatter.format(event));
+    }
+
+    @Override
+    public void emit(String event) {
+        rpc.send(event);
+    }
+
+    @Override
+    public int emit(List<String> eventList) {
+        return rpc.sendList(eventList);
+    }
+
+    @Override
+    public boolean openConnection() {
+        return rpc.openConnection();
+    }
+
+    @Override
+    public boolean closeConnection() {
+        return rpc.closeConnection();
     }
 }
-
