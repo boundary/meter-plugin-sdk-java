@@ -84,11 +84,13 @@ public class RPC {
     public boolean closeConnection() {
 
         try {
+        	if (dataOutputStream != null) {
+                dataOutputStream.close();
+                dataOutputStream = null;
+            }
             if (socket != null) {
                 socket.close();
-            }
-            if (dataOutputStream != null) {
-                dataOutputStream.close();
+                socket = null;
             }
             return true;
         } catch (IOException e) {
