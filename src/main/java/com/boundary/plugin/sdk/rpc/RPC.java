@@ -10,7 +10,7 @@ import org.slf4j.LoggerFactory;
 
 /**
  *
- * @author Santosh Patil
+ * @author Santosh Patil,vitiwari
  * @Date 16-05-2017
  */
 public class RPC {
@@ -19,6 +19,7 @@ public class RPC {
 
     final static String HOSTNAME = "localhost";
     final static int PORTNUMBER = 9192;
+    private static int connectionCount = 0;
     private static RPC rpc = new RPC();
     private Socket socket;
     private DataOutputStream dataOutputStream;
@@ -34,11 +35,12 @@ public class RPC {
         return rpc;
     }
 
-    public boolean openConnection() {
+    public synchronized boolean openConnection() {
         if (this.socket == null) {
             try {
                 this.socket = new Socket(HOSTNAME, PORTNUMBER);
-                this.dataOutputStream = new DataOutputStream(socket.getOutputStream());;
+                this.dataOutputStream = new DataOutputStream(socket.getOutputStream());
+                connectionCount++;
                 //socket.setKeepAlive(true);
                 return true;
             } catch (UnknownHostException e) {
@@ -46,11 +48,14 @@ public class RPC {
             } catch (IOException e) {
                 LOG.error("Unable to open Socket Connection", e);
             }
+        } else if (this.socket.isConnected()) {
+            connectionCount++;
+            return true;
         }
         return false;
     }
 
-    public void send(final String content) {
+    public synchronized void send(final String content) {
         try {
             if (socket != null) {
                 dataOutputStream.writeBytes(content);
@@ -63,7 +68,7 @@ public class RPC {
         }
     }
 
-    public int sendList(final List<String> contentList) {
+    public synchronized int sendList(final List<String> contentList) {
         int totalRecordsWritten = 0;
         try {
             if (socket != null && dataOutputStream != null) {
@@ -81,16 +86,19 @@ public class RPC {
         return totalRecordsWritten;
     }
 
-    public boolean closeConnection() {
+    public synchronized boolean closeConnection() {
 
         try {
-        	if (dataOutputStream != null) {
-                dataOutputStream.close();
-                dataOutputStream = null;
-            }
-            if (socket != null) {
-                socket.close();
-                socket = null;
+            connectionCount--;
+            if (connectionCount <= 0) {
+                if (dataOutputStream != null) {
+                    dataOutputStream.close();
+                    dataOutputStream = null;
+                }
+                if (socket != null) {
+                    socket.close();
+                    socket = null;
+                }
             }
             return true;
         } catch (IOException e) {
