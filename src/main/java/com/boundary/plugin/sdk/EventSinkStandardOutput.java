@@ -13,8 +13,6 @@
 // limitations under the License.
 package com.boundary.plugin.sdk;
 
-import java.util.List;
-
 public class EventSinkStandardOutput implements EventSink {
 
     private EventFormatter formatter;
@@ -29,12 +27,7 @@ public class EventSinkStandardOutput implements EventSink {
     }
 
     @Override
-    public void emit(final String event) {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
-
-    @Override
-    public int emit(List<String> event) {
+    public String emit(final String eventRpcJson) {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 

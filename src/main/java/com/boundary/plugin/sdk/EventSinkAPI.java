@@ -13,8 +13,6 @@
 // limitations under the License.
 package com.boundary.plugin.sdk;
 
-import java.util.List;
-
 import com.boundary.plugin.sdk.rpc.RPC;
 
 public class EventSinkAPI implements EventSink {
@@ -33,13 +31,8 @@ public class EventSinkAPI implements EventSink {
     }
 
     @Override
-    public void emit(String event) {
-        rpc.send(event);
-    }
-
-    @Override
-    public int emit(List<String> eventList) {
-        return rpc.sendList(eventList);
+    public String emit(String eventRpcJson) {
+        return rpc.send(eventRpcJson);
     }
 
     @Override
