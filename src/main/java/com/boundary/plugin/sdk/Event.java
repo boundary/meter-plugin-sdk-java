@@ -11,7 +11,6 @@
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
 // limitations under the License.
-
 package com.boundary.plugin.sdk;
 
 import java.util.List;
@@ -23,21 +22,21 @@ import java.util.ArrayList;
 public class Event {
 
     public enum EventSeverity {
-        INFO, WARN, ERROR, CRITICAL; 
+        INFO, WARN, ERROR, CRITICAL;
     }
-    
+
     private String title;
     private String message;
-    private EventSeverity severity;  
+    private EventSeverity severity;
     private List<String> tags;
     private String host;
     private String source;
 
     public Event(final String title, final String message) {
-       this.severity = EventSeverity.INFO; 
-       this.title = "";
-       this.message = "";
-       this.tags = new ArrayList<String>();
+        this.severity = EventSeverity.INFO;
+        this.title = "";
+        this.message = "";
+        this.tags = new ArrayList<String>();
     }
 
     public Event(final EventSeverity severity, final String title, final String message, final String host, final String source, final List<String> tags) {
@@ -77,4 +76,3 @@ public class Event {
         return tags != null && tags.size() > 0;
     }
 }
-

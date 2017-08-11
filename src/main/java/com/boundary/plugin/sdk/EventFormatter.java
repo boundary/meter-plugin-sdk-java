@@ -13,9 +13,7 @@
 // limitations under the License.
 package com.boundary.plugin.sdk;
 
-import java.lang.StringBuffer;
 import java.util.List;
-import java.util.ArrayList;
 
 import com.boundary.plugin.sdk.Event;
 import com.boundary.plugin.sdk.Event.EventSeverity;
