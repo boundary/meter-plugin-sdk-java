@@ -1,5 +1,6 @@
 package com.boundary.plugin.sdk.rpc;
 
+import java.io.BufferedOutputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -61,8 +62,9 @@ public class RPC {
         String result = null;
         try {
             if (socket != null) {
-                dataOutputStream.writeBytes(contentRpcJson);
-                dataOutputStream.flush();
+                BufferedOutputStream bos = new BufferedOutputStream(socket.getOutputStream());
+                bos.write(contentRpcJson.getBytes("UTF-8"));
+                bos.flush();
                 result = convertStreamToString(this.inStream);
             } else {
                 LOG.error("Unable to write the events, Socket connection is not open");
