@@ -1,6 +1,6 @@
 package com.boundary.plugin.sdk.rpc;
 
-import java.io.DataOutputStream;
+import java.io.BufferedOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.Socket;
@@ -22,7 +22,7 @@ public class RPC {
     private static int connectionCount = 0;
     private static RPC rpc = new RPC();
     private Socket socket;
-    private DataOutputStream dataOutputStream;
+    private BufferedOutputStream bufferedOutputStream;
     private InputStream inStream;
 
     private RPC() {
@@ -37,12 +37,18 @@ public class RPC {
     }
 
     public synchronized boolean openConnection() {
+    	LOG.debug("Open connection called ...");
         if (this.socket == null) {
+        	LOG.debug("socket instance is null creating a socket connection");
             try {
                 this.socket = new Socket(HOSTNAME, PORTNUMBER);
-                this.dataOutputStream = new DataOutputStream(socket.getOutputStream());
+                LOG.debug("Socket Connection successfully created and assigned ");
+                this.bufferedOutputStream = new BufferedOutputStream(socket.getOutputStream());
+                LOG.debug("Socket output stream created and assigned");
                 this.inStream = this.socket.getInputStream();
+                LOG.debug("Socket input Stream created and assigned");
                 connectionCount++;
+                LOG.debug("Connection count is {}",connectionCount);
                 //socket.setKeepAlive(true);
                 return true;
             } catch (UnknownHostException e) {
@@ -50,19 +56,29 @@ public class RPC {
             } catch (IOException e) {
                 LOG.error("Unable to open Socket Connection", e);
             }
-        } else if (this.socket.isConnected()) {
-            connectionCount++;
-            return true;
+        } else{
+        	LOG.debug("Socket instance is not null, checking if the socket is still connected ...");
+        	if (this.socket.isConnected()) {
+	            connectionCount++;
+	            LOG.debug("Socket is still connected, increasing connection count to {} ",connectionCount);
+	            return true;
+        	}
         }
         return false;
     }
 
     public synchronized String send(final String contentRpcJson) {
+    	
+    	LOG.debug("Send called for events list , {} ...",contentRpcJson);
         String result = null;
         try {
             if (socket != null) {
-                dataOutputStream.writeBytes(contentRpcJson);
-                dataOutputStream.flush();
+            	LOG.debug("writing the events to output stream ..");
+            	byte[] utf8JsonString = contentRpcJson.getBytes("UTF-8");
+            	bufferedOutputStream.write(utf8JsonString, 0, utf8JsonString.length);
+                LOG.debug("Events written to output stream.");
+                bufferedOutputStream.flush();
+                LOG.debug("Output stream flushed, waiting for the input stream response .....");
                 result = convertStreamToString(this.inStream);
             } else {
                 LOG.error("Unable to write the events, Socket connection is not open");
@@ -76,16 +92,20 @@ public class RPC {
     public synchronized boolean closeConnection() {
 
         try {
+        	LOG.debug("Closing the connection , total {} connections are open",connectionCount);
             connectionCount--;
             if (connectionCount <= 0) {
-                if (dataOutputStream != null) {
-                    dataOutputStream.close();
-                    dataOutputStream = null;
+            	 LOG.debug(" total {} connections are open, its time to close the stream and sockets",connectionCount);
+                if (bufferedOutputStream != null) {
+                	bufferedOutputStream.close();
+                	bufferedOutputStream = null;
                     inStream.close();
+                    LOG.debug("Streams closed");
                 }
                 if (socket != null) {
                     socket.close();
                     socket = null;
+                    LOG.debug("Socket closed");
                 }
             }
             return true;
@@ -130,6 +150,7 @@ public class RPC {
             }
         }
         String data = type.toString();
+        LOG.debug("Recieved Response --> {}",type);
         return data;
     }
 
