@@ -23,6 +23,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.boundary.plugin.sdk.CollectorDispatcher;
+import com.boundary.plugin.sdk.Constants;
 import com.boundary.plugin.sdk.MeasurementSink;
 import com.boundary.plugin.sdk.EventSink;
 import com.boundary.plugin.sdk.Plugin;
@@ -32,26 +33,26 @@ import com.google.gson.Gson;
 import com.google.gson.JsonParseException;
 
 public class JMXPlugin implements Plugin<JMXPluginConfiguration> {
-	
-	private static Logger LOG = LoggerFactory.getLogger(JMXPlugin.class);
 
-	private JMXPluginConfiguration configuration;
-	private CollectorDispatcher dispatcher;
-	private MeasurementSink output;
+    private static Logger LOG = LoggerFactory.getLogger(JMXPlugin.class);
+
+    private JMXPluginConfiguration configuration;
+    private CollectorDispatcher dispatcher;
+    private MeasurementSink output;
     private EventSink eventOutput;
-	private MBeanMap mbeanMap;
+    private MBeanMap mbeanMap;
     private PluginJSON manifest;
-	private AttributeValueExtractor valueExtractor;
-	private final String MBEAN_MAP_PATH="config/mbeans.json";
-    private final String PLUGIN_MANIFEST_PATH="plugin.json";
-	private final String PLUGIN_PARAM_PATH="param.json";
-	
-	@Override
-	public void setMeasureOutput(MeasurementSink output) {
-		LOG.info("setting measureoutput");
-		this.output = output;
-		this.valueExtractor = new AttributeValueExtractor();
-	}
+    private AttributeValueExtractor valueExtractor;
+    private final String MBEAN_MAP_PATH = "config/mbeans.json";
+    private final String PLUGIN_MANIFEST_PATH = "plugin.json";
+    private final String PLUGIN_PARAM_PATH = "param.json";
+
+    @Override
+    public void setMeasureOutput(MeasurementSink output) {
+        LOG.info("setting measureoutput");
+        this.output = output;
+        this.valueExtractor = new AttributeValueExtractor();
+    }
 
     @Override
     public void setEventOutput(EventSink output) {
@@ -63,29 +64,36 @@ public class JMXPlugin implements Plugin<JMXPluginConfiguration> {
         return this.manifest;
     }
 
-	@Override
-	public void setConfiguration(JMXPluginConfiguration configuration) {
-		this.configuration = configuration;
-	}
+    @Override
+    public void setConfiguration(JMXPluginConfiguration configuration) {
+        this.configuration = configuration;
+    }
 
-	public void loadConfiguration() {
-		try {
-			JMXPluginConfiguration configuration = JMXPluginConfiguration.getConfiguration(new FileReader(PLUGIN_PARAM_PATH));
-			setConfiguration(configuration);
-		} catch (FileNotFoundException e) {
-			e.printStackTrace();
-		}
+    public void loadConfiguration() {
+        try {
+            Gson gson = new Gson();
+            String param = System.getenv(Constants.TSP_PLUGIN_PARAMS);
+            JMXPluginConfiguration configuration = null;
+            if (param == null || param == "") {
+                configuration = JMXPluginConfiguration.getConfiguration(new FileReader(PLUGIN_PARAM_PATH));
+            } else {
+                configuration = gson.fromJson(param, JMXPluginConfiguration.class);
+            }
+            setConfiguration(configuration);
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }
 
-		try {
-			Gson gson = new Gson();
-			mbeanMap = gson.fromJson(new FileReader(MBEAN_MAP_PATH), MBeanMap.class);
-		} catch (JsonParseException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+        try {
+            Gson gson = new Gson();
+            mbeanMap = gson.fromJson(new FileReader(MBEAN_MAP_PATH), MBeanMap.class);
+        } catch (JsonParseException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        } catch (IOException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
 
         try {
             Gson gson = new Gson();
@@ -95,20 +103,19 @@ public class JMXPlugin implements Plugin<JMXPluginConfiguration> {
         } catch (IOException e) {
             e.printStackTrace();
         }
-	}
+    }
 
-	@Override
-	public void setDispatcher(CollectorDispatcher dispatcher) {
-		this.dispatcher = dispatcher;
-	}
+    @Override
+    public void setDispatcher(CollectorDispatcher dispatcher) {
+        this.dispatcher = dispatcher;
+    }
 
-	@Override
-	public void run() {
-		ArrayList<JMXPluginConfigurationItem> items = configuration.getItems();
-		for(JMXPluginConfigurationItem i : items) {
-			dispatcher.addCollector(new JMXCollector(this, i.getName(),i,mbeanMap,valueExtractor,output,eventOutput));
-		}
-		dispatcher.run();
-	}
+    @Override
+    public void run() {
+        ArrayList<JMXPluginConfigurationItem> items = configuration.getItems();
+        for (JMXPluginConfigurationItem i : items) {
+            dispatcher.addCollector(new JMXCollector(this, i.getName(), i, mbeanMap, valueExtractor, output, eventOutput));
+        }
+        dispatcher.run();
+    }
 }
-
