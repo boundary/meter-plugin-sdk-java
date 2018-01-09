@@ -14,17 +14,14 @@
 
 package com.boundary.plugin.sdk.jmx;
 
-import java.io.IOException;
-import java.util.ArrayList;
-
+import com.boundary.plugin.sdk.jmx.extractor.AttributeValueExtractor;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-import com.boundary.plugin.sdk.jmx.extractor.AttributeValueExtractor;
-import com.boundary.plugin.sdk.jmx.MBeanAttribute;
+import static org.junit.Assert.assertEquals;
 
 public class AttributeValueExtractorTest {
 	
@@ -50,7 +47,8 @@ public class AttributeValueExtractorTest {
 		AttributeValueExtractor valueExtractor = new AttributeValueExtractor();
 		int value = 2;
 		MBeanAttribute attr = new MBeanAttribute();
-		assertEquals(new Integer(2), valueExtractor.getValue(value, attr));
+		attr.setDataType("int");
+		assertEquals(2.0, valueExtractor.getValue(value, attr));
 	}
 
 	@Test
@@ -58,8 +56,9 @@ public class AttributeValueExtractorTest {
 		AttributeValueExtractor valueExtractor = new AttributeValueExtractor();
 		Number value = 2;
 		MBeanAttribute attr = new MBeanAttribute();
-		attr.setScale(3);
-		assertEquals(new Integer(6), valueExtractor.getValue(value, attr));
+		attr.setDataType("int");
+		attr.setScale(3.0);
+		assertEquals(6.0, valueExtractor.getValue(value, attr));
 	}
 
 }

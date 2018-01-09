@@ -82,11 +82,6 @@
        <artifactId>findbugs-maven-plugin</artifactId>
        <version>${findbugs-maven-plugin-version}</version>
      </plugin>
-     <plugin>
-       <groupId>org.codehaus.mojo</groupId>
-       <artifactId>cobertura-maven-plugin</artifactId>
-       <version>${cobertura-maven-plugin-version}</version>
-     </plugin>
    </plugins>
   </reporting>
   <build>
@@ -111,17 +106,6 @@
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-gpg-plugin</artifactId>
         <version>${maven-gpg-plugin-version}</version>
-<!--
-        <executions>
-          <execution>
-            <id>sign-artifacts</id>
-            <phase>verify</phase>
-            <goals>
-              <goal>sign</goal>
-            </goals>
-          </execution>
-        </executions>
--->
       </plugin>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
@@ -140,9 +124,9 @@
     </plugins>
   </build>
   <scm>
-    <connection>scm:git:git@github.com:boundary/boundary-plugin-framework-java.git</connection>
-    <developerConnection>scm:git:git@github.com:boundary/boundary-plugin-framework-java.git</developerConnection>
-    <url>git@github.com:boundary/boundary-plugin-framework-java.git</url>
+    <connection>scm:git:git@github.com:boundary/meter-plugin-sdk-java.git</connection>
+    <developerConnection>scm:git:git@github.com:boundary/meter-plugin-sdk-java.git</developerConnection>
+    <url>git@github.com:boundary/meter-plugin-sdk-java.git</url>
   </scm>
 
   <profiles>
