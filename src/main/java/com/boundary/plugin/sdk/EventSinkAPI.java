@@ -13,9 +13,17 @@
 // limitations under the License.
 package com.boundary.plugin.sdk;
 
+import java.io.IOException;
+import java.net.UnknownHostException;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.boundary.plugin.sdk.rpc.RPC;
 
 public class EventSinkAPI implements EventSink {
+
+    private static Logger LOG = LoggerFactory.getLogger(EventSinkAPI.class);
 
     private final EventFormatter formatter;
     private RPC rpc;
@@ -27,21 +35,26 @@ public class EventSinkAPI implements EventSink {
 
     @Override
     public void emit(Event event) {
-        rpc.send(formatter.format(event));
+        try {
+            rpc.send(formatter.format(event));
+        } catch (IOException e) {
+            LOG.error("IOException : Event could not be sent, " + e.getMessage());
+        }
     }
 
     @Override
-    public String emit(String eventRpcJson) {
+    public String emit(String eventRpcJson) throws IOException {
         return rpc.send(eventRpcJson);
+
     }
 
     @Override
-    public boolean openConnection() {
+    public int openConnection() throws UnknownHostException, IOException {
         return rpc.openConnection();
     }
 
     @Override
-    public boolean closeConnection() {
+    public int closeConnection() throws IOException {
         return rpc.closeConnection();
     }
 }

@@ -13,14 +13,17 @@
 // limitations under the License.
 package com.boundary.plugin.sdk;
 
+import java.io.IOException;
+import java.net.UnknownHostException;
+
 public interface EventSink {
 
     public void emit(Event event);
 
-    public String emit(final String eventRpcJson);
+    public String emit(final String eventRpcJson) throws IOException;
 
-    public boolean openConnection();
+    public int openConnection() throws UnknownHostException, IOException;
 
-    public boolean closeConnection();
+    public int closeConnection() throws IOException;
 
 }
