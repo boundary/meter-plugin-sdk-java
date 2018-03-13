@@ -36,84 +36,68 @@ public class RPC {
         return rpc;
     }
 
-    public synchronized boolean openConnection() {
-    	LOG.debug("Open connection called ...");
+    public synchronized int openConnection() throws UnknownHostException, IOException {
         if (this.socket == null) {
-        	LOG.debug("socket instance is null creating a socket connection");
-            try {
-                this.socket = new Socket(HOSTNAME, PORTNUMBER);
-                LOG.debug("Socket Connection successfully created and assigned ");
-                this.bufferedOutputStream = new BufferedOutputStream(socket.getOutputStream());
-                LOG.debug("Socket output stream created and assigned");
-                this.inStream = this.socket.getInputStream();
-                LOG.debug("Socket input Stream created and assigned");
+            LOG.debug("socket instance is null creating a socket connection");
+            this.socket = new Socket(HOSTNAME, PORTNUMBER);
+            LOG.debug("Socket Connection successfully created and assigned ");
+            this.bufferedOutputStream = new BufferedOutputStream(socket.getOutputStream());
+            LOG.debug("Socket output stream created and assigned");
+            this.inStream = this.socket.getInputStream();
+            LOG.debug("Socket input Stream created and assigned");
+            connectionCount++;
+            LOG.debug("Connection count is {}", connectionCount);
+            // socket.setKeepAlive(true);
+            return connectionCount;
+
+        } else {
+            LOG.debug("Socket instance is not null, checking if the socket is still connected ...");
+            if (this.socket.isConnected()) {
                 connectionCount++;
-                LOG.debug("Connection count is {}",connectionCount);
-                //socket.setKeepAlive(true);
-                return true;
-            } catch (UnknownHostException e) {
-                LOG.error("Unable to open socket connection to host", e);
-            } catch (IOException e) {
-                LOG.error("Unable to open Socket Connection", e);
+                LOG.debug("Socket is still connected, increasing connection count to {} ", connectionCount);
             }
-        } else{
-        	LOG.debug("Socket instance is not null, checking if the socket is still connected ...");
-        	if (this.socket.isConnected()) {
-	            connectionCount++;
-	            LOG.debug("Socket is still connected, increasing connection count to {} ",connectionCount);
-	            return true;
-        	}
+            return connectionCount;
         }
-        return false;
     }
 
-    public synchronized String send(final String contentRpcJson) {
-    	
-    	LOG.debug("Send called for events list , {} ...",contentRpcJson);
+    public synchronized String send(final String contentRpcJson) throws IOException {
+
+        LOG.debug("Send called for events list , {} ...", contentRpcJson);
         String result = null;
-        try {
-            if (socket != null) {
-            	LOG.debug("writing the events to output stream ..");
-            	byte[] utf8JsonString = contentRpcJson.getBytes("UTF-8");
-            	bufferedOutputStream.write(utf8JsonString, 0, utf8JsonString.length);
-                LOG.debug("Events written to output stream.");
-                bufferedOutputStream.flush();
-                LOG.debug("Output stream flushed, waiting for the input stream response .....");
-                result = convertStreamToString(this.inStream);
-            } else {
-                LOG.error("Unable to write the events, Socket connection is not open");
-            }
-        } catch (IOException ex) {
-            LOG.error("Exception occured while sending content to meter", ex);
+        if (socket != null) {
+            LOG.debug("writing the events to output stream ..");
+            byte[] utf8JsonString = contentRpcJson.getBytes("UTF-8");
+            bufferedOutputStream.write(utf8JsonString, 0, utf8JsonString.length);
+            LOG.debug("Events written to output stream.");
+            bufferedOutputStream.flush();
+            LOG.debug("Output stream flushed, waiting for the input stream response .....");
+            result = convertStreamToString(this.inStream);
+        } else {
+            LOG.error("Unable to write the events, Socket connection is not open");
         }
+
         return result;
     }
 
-    public synchronized boolean closeConnection() {
+    public synchronized int closeConnection() throws IOException {
 
-        try {
-        	LOG.debug("Closing the connection , total {} connections are open",connectionCount);
-            connectionCount--;
-            if (connectionCount <= 0) {
-            	 LOG.debug(" total {} connections are open, its time to close the stream and sockets",connectionCount);
-                if (bufferedOutputStream != null) {
-                	bufferedOutputStream.close();
-                	bufferedOutputStream = null;
-                    inStream.close();
-                    LOG.debug("Streams closed");
-                }
-                if (socket != null) {
-                    socket.close();
-                    socket = null;
-                    LOG.debug("Socket closed");
-                }
+        LOG.debug("Closing the connection , total {} connections are open", connectionCount);
+        connectionCount--;
+        if (connectionCount <= 0) {
+            LOG.debug(" total {} connections are open, its time to close the stream and sockets", connectionCount);
+            if (bufferedOutputStream != null) {
+                bufferedOutputStream.close();
+                bufferedOutputStream = null;
+                inStream.close();
+                LOG.debug("Streams closed");
             }
-            return true;
-        } catch (IOException e) {
-            LOG.error("Unable to close Socket Connection", e);
+            if (socket != null) {
+                socket.close();
+                socket = null;
+                LOG.debug("Socket closed");
+            }
         }
-
-        return false;
+        return connectionCount;
     }
 
     private String convertStreamToString(InputStream instream) {
@@ -127,7 +111,8 @@ public class RPC {
             } catch (IOException e) {
                 e.printStackTrace();
             }
-            // NOTE: conversion from byte to char here works for ISO8859-1/US-ASCII
+            // NOTE: conversion from byte to char here works for
+            // ISO8859-1/US-ASCII
             // but fails for UTF etc.
             type.append((char) ch);
             switch ((char) ch) {
@@ -150,7 +135,7 @@ public class RPC {
             }
         }
         String data = type.toString();
-        LOG.debug("Recieved Response --> {}",type);
+        LOG.debug("Recieved Response --> {}", type);
         return data;
     }
 

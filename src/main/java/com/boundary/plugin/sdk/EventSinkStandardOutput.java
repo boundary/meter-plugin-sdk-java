@@ -32,12 +32,12 @@ public class EventSinkStandardOutput implements EventSink {
     }
 
     @Override
-    public boolean openConnection() {
+    public int openConnection() {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
     @Override
-    public boolean closeConnection() {
+    public int closeConnection() {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
